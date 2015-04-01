@@ -5,71 +5,12 @@
 #include <fstream>
 #include <vector>
 #include "kmc_system.h"
+#include "kmc_global.h"
+#include "kmc_par.h"
 
 #define MAX_NNBR 20
 
 using namespace std;
-
-////////// Functions for the whole program //////////
-void error(int nexit, string errinfo, int nnum, double num1, double num2){
-	// exit number represents:
-	// 0: main; 1: class_system; 2: class_events
-	
-	cout << "\nError: ";
-	switch(nexit){
-		case 0:  cout << "In main function "; break;
-		case 1:  cout << "In class_system ";  break;
-		case 2:  cout << "In class_events ";  break;
-		default: cout << "UNKNOWN NEXIT" << endl;
-	}
-
-	cout << errinfo;
-	switch(nnum){
-		case 0:  cout << endl;				      break;
-		case 1:  cout << ": " << num1 << endl;		      break;
-		case 2:  cout << ": " << num1 << " " << num2 << endl; break;
-		default: cout << "!!!ERROR FUNCTION MALFUNCTION!!! WRONG NNUM!!!" << endl;
-	}
-	cout << endl;
-	exit(1); 
-}
-
-void error(int nexit, string errinfo, char c[]){
-	// exit number represents:
-	// 0: main; 1: class_system; 2: class_events
-	
-	cout << "\nError: ";
-	switch(nexit){
-		case 0:  cout << "In main function "; break;
-		case 1:  cout << "In class_system ";  break;
-		case 2:  cout << "In class_events ";  break;
-		default: cout << "UNKNOWN NEXIT" << endl;
-	}
-
-	cout << errinfo << " " << c << endl;
-	exit(1); 
-}
-
-double ran_generator(){
-	static bool first= true;
-	if(first){
-		srand(time(NULL));
-		first= false;
-	}
-	
-	return rand()/((double) RAND_MAX+1.0);
-}
-
-int pbc(int x_, int nx_){ // Periodic Boundary Condition
-	if	(x_<-nx_ || x_>=2*nx_)
-		error(1, "(pbc) input x is out of bound", 2, x_, nx_);
-
-	if	(x_<0) 		return (x_ + nx_);
-	else if	(x_<nx_)	return  x_;
-	else			return (x_ - nx_);
-}
-
-////////// Functions for the whole program //////////
 
 void class_system::ltc_constructor(){
 	double (*ptr_vbra)[3]; 
@@ -222,4 +163,108 @@ void class_system::write_conf(long long int timestep, double time, int *ptr_stat
 	
 	of_xyz.close();
 	of_ltcp.close();
+}
+
+void class_system::init_par(){
+	// 1st-nn class 1
+	c1_44= ( (eAA1AA -8*eAA1A -8*eAA1B +12*eAA1AB +2*eAA1BB +12*eAB1BB -8*eA1BB -8*eB1BB +eBB1BB) +
+	       (48*eA1AB -12*eAB1AB +48*eAB1B) + (-48*eA1V +48*eV1V -48*eV1B) + (16*eA1A +32*eA1B +16*eB1B) )/576; 
+	 
+	c1_42= ( (-eAA1AA +20*eAA1A +20*eAA1B -36*eAA1AB -2*eAA1BB -36*eAB1BB +20*eA1BB +20*eB1BB -eBB1BB) +
+	       (-216*eA1AB +36*eAB1AB -216*eAB1B) + (216*eA1V -216*eV1V +216*eV1B) + (-64*eA1A -128*eA1B -64*eB1B) )/576; 
+
+	c1_22= ( (eAA1AA -32*eAA1A -32*eAA1B +60*eAA1AB +2*eAA1BB +60*eAB1BB -32*eA1BB -32*eB1BB +eBB1BB) +
+	       (960*eA1AB -60*eAB1AB +960*eAB1B) + (-960*eA1V +960*eV1V -960*eV1B) + (256*eA1A +512*eA1B +256*eB1B) )/576; 
+	
+	// 1st-nn class 2
+	c1_43= ( (eAA1AA -6*eAA1A -2*eAA1B +6*eAA1AB -6*eAB1BB +2*eA1BB +6*eB1BB -eBB1BB) +
+	       (12*eA1AB -12*eAB1B) + (-12*eA1V +12*eV1B) + (8*eA1A -8*eB1B) )/288; 
+	 
+	c1_41= ( (-eAA1AA +12*eAA1A -4*eAA1B -6*eAA1AB +6*eAB1BB +4*eA1BB -12*eB1BB +eBB1BB) +
+	       (-48*eA1AB +48*eAB1B) + (48*eA1V -48*eV1B) + (-32*eA1A +32*eB1B) )/288; 
+	
+	c1_32= ( (-eAA1AA +18*eAA1A +14*eAA1B -30*eAA1AB +30*eAB1BB -14*eA1BB -18*eB1BB +eBB1BB) +
+	       (-60*eA1AB +60*eAB1B) + (60*eA1V -60*eV1B) + (-32*eA1A +32*eB1B) )/288; 
+	
+	c1_21= ( (eAA1AA -24*eAA1A -8*eAA1B +30*eAA1AB -30*eAB1BB +8*eA1BB +24*eB1BB -eBB1BB) +
+	       (240*eA1AB -240*eAB1B) + (-240*eA1V +240*eV1B) + (128*eA1A -128*eB1B) )/288; 
+	
+	// 1st-nn class 3
+	c1_33= ( (eAA1AA -4*eAA1A +4*eAA1B -2*eAA1BB +4*eA1BB -4*eB1BB +eBB1BB) +
+	       (4*eA1A -8*eA1B +4*eB1B) )/144; 
+	
+	c1_31= ( (-eAA1AA +10*eAA1A -10*eAA1B +2*eAA1BB -10*eA1BB +10*eB1BB -eBB1BB) +
+	       (-16*eA1A +32*eA1B -16*eB1B) )/144; 
+	
+	c1_11= ( (eAA1AA -16*eAA1A +16*eAA1B -2*eAA1BB +16*eA1BB -16*eB1BB +eBB1BB) +
+	       (64*eA1A -128*eA1B +64*eB1B) )/144; 
+	
+	// 2nd-nn class 1
+	c2_44= ( (eAA2AA -8*eAA2A -8*eAA2B +12*eAA2AB +2*eAA2BB +12*eAB2BB -8*eA2BB -8*eB2BB +eBB2BB) +
+	       (48*eA2AB -12*eAB2AB +48*eAB2B) + (-48*eA2V +48*eV2V -48*eV2B) + (16*eA2A +32*eA2B +16*eB2B) )/576; 
+	 
+	c2_42= ( (-eAA2AA +20*eAA2A +20*eAA2B -36*eAA2AB -2*eAA2BB -36*eAB2BB +20*eA2BB +20*eB2BB -eBB2BB) +
+	       (-216*eA2AB +36*eAB2AB -216*eAB2B) + (216*eA2V -216*eV2V +216*eV2B) + (-64*eA2A -128*eA2B -64*eB2B) )/576; 
+
+	c2_22= ( (eAA2AA -32*eAA2A -32*eAA2B +60*eAA2AB +2*eAA2BB +60*eAB2BB -32*eA2BB -32*eB2BB +eBB2BB) +
+	       (960*eA2AB -60*eAB2AB +960*eAB2B) + (-960*eA2V +960*eV2V -960*eV2B) + (256*eA2A +512*eA2B +256*eB2B) )/576; 
+	
+	// 2nd-nn class 2
+	c2_43= ( (eAA2AA -6*eAA2A -2*eAA2B +6*eAA2AB -6*eAB2BB +2*eA2BB +6*eB2BB -eBB2BB) +
+	       (12*eA2AB -12*eAB2B) + (-12*eA2V +12*eV2B) + (8*eA2A -8*eB2B) )/288; 
+	 
+	c2_41= ( (-eAA2AA +12*eAA2A -4*eAA2B -6*eAA2AB +6*eAB2BB +4*eA2BB -12*eB2BB +eBB2BB) +
+	       (-48*eA2AB +48*eAB2B) + (48*eA2V -48*eV2B) + (-32*eA2A +32*eB2B) )/288; 
+	
+	c2_32= ( (-eAA2AA +18*eAA2A +14*eAA2B -30*eAA2AB +30*eAB2BB -14*eA2BB -18*eB2BB +eBB2BB) +
+	       (-60*eA2AB +60*eAB2B) + (60*eA2V -60*eV2B) + (-32*eA2A +32*eB2B) )/288; 
+	
+	c2_21= ( (eAA2AA -24*eAA2A -8*eAA2B +30*eAA2AB -30*eAB2BB +8*eA2BB +24*eB2BB -eBB2BB) +
+	       (240*eA2AB -240*eAB2B) + (-240*eA2V +240*eV2B) + (128*eA2A -128*eB2B) )/288; 
+	
+	// 2nd-nn class 3
+	c2_33= ( (eAA2AA -4*eAA2A +4*eAA2B -2*eAA2BB +4*eA2BB -4*eB2BB +eBB2BB) +
+	       (4*eA2A -8*eA2B +4*eB2B) )/144; 
+	
+	c2_31= ( (-eAA2AA +10*eAA2A -10*eAA2B +2*eAA2BB -10*eA2BB +10*eB2BB -eBB2BB) +
+	       (-16*eA2A +32*eA2B -16*eB2B) )/144; 
+	
+	c2_11= ( (eAA2AA -16*eAA2A +16*eAA2B -2*eAA2BB +16*eA2BB -16*eB2BB +eBB2BB) +
+	       (64*eA2A -128*eA2B +64*eB2B) )/144; 
+
+	if(0==c2_44 && 0==c2_43 && 0==c2_42 && 0==c2_41 && 0==c2_33 && 0==c2_32 && 0==c2_31 && 0==c2_22 && 0==c2_21 && 0==c2_11) is_e2nbr= false;
+	else is_e2nbr= true;
+
+	// print out the parameters to log file
+	cout << "Parameters:" << endl; 
+	
+	cout << "beta= " << beta << endl;
+	printf("mu= %f %f\n", muA, muB);
+	printf("Em= %f %f\n", emA, emB);
+	
+	cout << "Input epsilons:" << endl;
+	cout << "(1st neigbor)" << endl;
+	printf("AA-AA: %f, AA-A: %f, AA-V: %f, AA-AB: %f, AA-B: %f, AA-BB: %f\n", eAA1AA, eAA1A, eAA1V, eAA1AB, eAA1B, eAA1BB);
+	printf("A-A:   %f, A-V:  %f, A-AB: %f, A-B:   %f, A-BB: %f\n", eA1A, eA1V, eA1AB, eA1B, eA1BB);
+	printf("V-V:   %f, V-AB: %f, V-B:  %f, V-BB:  %f\n", eV1V, eV1AB, eV1B, eV1BB);
+	printf("AB-AB: %f, AB-B: %f, AB-BB: %f\n", eAB1AB, eAB1B, eAB1BB);
+	printf("B-B:   %f, B-BB: %f\n", eB1B, eB1BB);
+	printf("BB-BB: %f\n", eBB1BB);
+	cout << "(2nd neigbor)" << endl;
+	printf("AA-AA: %f, AA-A: %f, AA-V: %f, AA-AB: %f, AA-B: %f, AA-BB: %f\n", eAA2AA, eAA2A, eAA2V, eAA2AB, eAA2B, eAA2BB);
+	printf("A-A:   %f, A-V:  %f, A-AB: %f, A-B:   %f, A-BB: %f\n", eA2A, eA2V, eA2AB, eA2B, eA2BB);
+	printf("V-V:   %f, V-AB: %f, V-B:  %f, V-BB:  %f\n", eV2V, eV2AB, eV2B, eV2BB);
+	printf("AB-AB: %f, AB-B: %f, AB-BB: %f\n", eAB2AB, eAB2B, eAB2BB);
+	printf("B-B:   %f, B-BB: %f\n", eB2B, eB2BB);
+	printf("BB-BB: %f\n", eBB2BB);
+	
+	cout << "\nIsing formulation constants:" << endl;
+	cout << "(1st neighbor)" << endl;
+	printf("Class 1\nC44: %f, C42: %f, C22: %f\n", c1_44, c1_42, c1_22);
+	printf("Class 2\nC43: %f, C41: %f, C32: %f, C21: %f\n", c1_43, c1_41, c1_32, c1_21);
+	printf("Class 3\nC33: %f, C31: %f, C11: %f\n", c1_33, c1_31, c1_11);
+	cout << "(2nd neighbor)" << endl;
+	printf("Class 1\nC44: %f, C42: %f, C22: %f\n", c2_44, c2_42, c2_22);
+	printf("Class 2\nC43: %f, C41: %f, C32: %f, C21: %f\n", c2_43, c2_41, c2_32, c2_21);
+	printf("Class 3\nC33: %f, C31: %f, C11: %f\n", c2_33, c2_31, c2_11);
 }

@@ -31,19 +31,62 @@ const double par_emA=				 0;
 const double par_emB=				 0;
 
 // bonding energy parameters
-const double par_e1AA=                           0;
-const double par_e1BB=                           0;
-const double par_e1AB=                     0.04732;
-const double par_e1AV=                     0.04732;
-const double par_e1BV=                           0;
-const double par_e1VV=                           0;
 
-const double par_e2AA=                           0;
-const double par_e2BB=                           0;
-const double par_e2AB=                     0.01997;
-const double par_e2AV=                     0.01997;
-const double par_e2BV=                           0;
-const double par_e2VV=                           0;
+// 1st nn
+const double eAA1AA=                         0;
+const double eAA1A=                          0;
+const double eAA1V=                          0;
+const double eAA1AB=                         0;
+const double eAA1B=                          0;
+const double eAA1BB=                         0;
+// ---
+const double eA1A=                           0;
+const double eA1V=                           0;
+const double eA1AB=                          0;
+const double eA1B=                           0;
+const double eA1BB=                          0;
+// ---
+const double eV1V=                           0;
+const double eV1AB=                          0;
+const double eV1B=                           0;
+const double eV1BB=                          0;
+// ---
+const double eAB1AB=                         0;
+const double eAB1B=                          0;
+const double eAB1BB=                         0;
+// ---
+const double eB1B=                           0;
+const double eB1BB=                          0;
+// ---
+const double eBB1BB=                         0;
+
+// 2nd nn
+const double eAA2AA=                         0;
+const double eAA2A=                          0;
+const double eAA2V=                          0;
+const double eAA2AB=                         0;
+const double eAA2B=                          0;
+const double eAA2BB=                         0;
+// ---
+const double eA2A=                           0;
+const double eA2V=                           0;
+const double eA2AB=                          0;
+const double eA2B=                           0;
+const double eA2BB=                          0;
+// ---
+const double eV2V=                           0;
+const double eV2AB=                          0;
+const double eV2B=                           0;
+const double eV2BB=                          0;
+// ---
+const double eAB2AB=                         0;
+const double eAB2B=                          0;
+const double eAB2BB=                         0;
+// ---
+const double eB2B=                           0;
+const double eB2BB=                          0;
+// ---
+const double eBB2BB=                         0;
 
 // trapping number: solute atom trapping and intersitial trapping							 
 // 	const int par_trNsol= 3; // trapping number by solute atoms

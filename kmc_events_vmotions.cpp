@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include "kmc_system.h"
+#include "kmc_global.h"
 #include "kmc_events.h"
 
 using namespace std;

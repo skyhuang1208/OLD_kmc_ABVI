@@ -1,19 +1,13 @@
 #ifndef KMC_SYSTEM_INCLUDED
 #define KMC_SYSTEM_INCLUDED
-
 #include <iostream>
 #include <cstring>
+#include "kmc_global.h"
 
 #define MAX_NNBR 20
 #define MAX_NSPE 20
 
 using namespace std;
-
-////////// Functions for the whole program //////////
-void error(int nexit, string errinfo, int nnum=0, double num1=0, double num2=0);
-double ran_generator();
-int pbc(int x_, int nx_); // Periodic Boundary Condition
-////////// Functions for the whole program //////////
 
 class class_system{
 	public:
@@ -21,8 +15,7 @@ class class_system{
 		int v1nbr[MAX_NNBR][3];	// indexes vectors of 1st neighbors
 		int v2nbr[MAX_NNBR][3];	// indexes vectors of 2nd neighbors
 		
-		class_system(int nx_, int ny_, int nz_, const char type_ltc_[4], int *nA_, int *nB_, int *nV_, int *nI_): 
-		nx(nx_), ny(ny_), nz(nz_), 
+		class_system(const char type_ltc_[4], int *nA_, int *nB_, int *nV_, int *nI_): 
 		nA(nA_), nB(nB_), nV(nV_), nI(nI_) // pointers
 		{
 			stpcpy(type_ltc, type_ltc_);
@@ -36,6 +29,8 @@ class class_system{
 				cout << "v" << i << ": " << vbra[i][0] << " " << vbra[i][1] << " " << vbra[i][2] << endl;
 			cout << "And the number of 1st neighbors: " << n1nbr << endl;
 			cout << "    the number of 2nd neighbors: " << n2nbr << endl;
+		
+			init_par();
 		}
 		
 		// Functions
@@ -44,7 +39,6 @@ class class_system{
 		void write_conf(long long int timestep, double time, int *ptr_states);
 
 	private:
-		int       nx, ny, nz;
 		char      type_ltc[4];	// crystal structure type
 		double    vbra[3][3];	// coordinate vectors of bravice lattice
 
@@ -55,5 +49,6 @@ class class_system{
 		
 		// functions
 		void ltc_constructor();
+		void init_par();
 };
 #endif // KMC_SYSTEM_INCLUDED

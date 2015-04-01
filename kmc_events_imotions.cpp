@@ -2,7 +2,7 @@
 #define KMC_EVENTS_IMOTIONS_INCLUDED
 #include <iostream>
 #include <cmath>
-#include "kmc_system.h"
+#include "kmc_global.h"
 #include "kmc_events.h"
 
 void class_events::int_motions(){
