@@ -4,15 +4,14 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
-#include "kmc_system.h"
-#include "kmc_global.h"
+#include "kmc_initial.h"
 #include "kmc_par.h"
 
 #define MAX_NNBR 20
 
 using namespace std;
 
-void class_system::ltc_constructor(){
+void class_initial::ltc_constructor(){
 	double (*ptr_vbra)[3]; 
 	int   (*ptr_v1nbr)[3];
 	int   (*ptr_v2nbr)[3];
@@ -49,13 +48,15 @@ void class_system::ltc_constructor(){
 	}}
 }
 
-void class_system::init_states_array(int nVset, double compA, int* const states000){
+void class_initial::init_states_array(int nVset, double compA){
 	// STATE 0: vacancy, 1: A atom, -1: B atom
 
 	int putV= (nx*ny*nz)/nVset;
+	int Vcount= 0;
 
 	for(int i=0; i<nx*ny*nz; i++){	
-		if((i%putV==0) && (*nV<nVset)){
+		if((i%putV==0) && (Vcount<nVset)){
+			Vcount ++;
 			*(states000 + i)= 0;
 		}
 		else{
@@ -66,27 +67,27 @@ void class_system::init_states_array(int nVset, double compA, int* const states0
 		}
 	}
 
-	(*nV)= 0; (*nA)= 0; (*nB)= 0;
+	nV= 0; nA= 0; nB= 0;
 	////////// CHECK //////////
 	for(int i=0; i<nx*ny*nz; i++){ 
-		if(*(states000+i)==  0)		(*nV) ++;
-		else if(*(states000+i)== +1)	(*nA) ++;
-		else if(*(states000+i)== -1)	(*nB) ++;
+		if(*(states000+i)==  0)		nV ++;
+		else if(*(states000+i)== +1)	nA ++;
+		else if(*(states000+i)== -1)	nB ++;
 		else				error(1, "(init_states_array) a state type is unrecognizable", 1, *(states000+i));
 	}
-	if(*nV != nVset) error(1, "(init_states_array) The number of vacancies is not nVset", 2, *nV, nVset);
+	if(nV != nVset) error(1, "(init_states_array) The number of vacancies is not nVset", 2, nV, nVset);
 #define TOL 0.01
-	int nAtotal= *nA + *nB;
-	if(abs((double) *nA/nAtotal-compA) > TOL) error(1, "(init_states_array) the composition of generated conf is inconsistent of compA", 1, *nA);
+	int nAtotal= nA + nB;
+	if(abs((double) nA/nAtotal-compA) > TOL) error(1, "(init_states_array) the composition of generated conf is inconsistent of compA", 1, nA);
 	////////// CHECK //////////
 	
 	cout << "The random solution configuration has been generated!" << endl;
-	cout << "Vacancy: " << *nV << endl;
-	cout << "Atype A: " << *nA << ", pct: " << 100* (double) *nA/(nAtotal) << "%" << endl;
-	cout << "Atype B: " << *nB << ", pct: " << 100* (double) *nB/(nAtotal) << "%" << endl;
+	cout << "Vacancy: " << nV << endl;
+	cout << "Atype A: " << nA << ", pct: " << 100* (double) nA/(nAtotal) << "%" << endl;
+	cout << "Atype B: " << nB << ", pct: " << 100* (double) nB/(nAtotal) << "%" << endl;
 }
 
-void class_system::read_restart(char name_restart[], int* const states000, int &ts_initial, double &time_initial){
+void class_initial::read_restart(char name_restart[], long long int &ts_initial, double &time_initial){
 	ifstream if_re(name_restart, ios::in);
 	if(!if_re.is_open()) error(1, "(read_restart) the file is not opened!");
 	
@@ -103,7 +104,7 @@ void class_system::read_restart(char name_restart[], int* const states000, int &
 	ts_initial= timestep;
 	time_initial= time;
 
-	*nV= 0; *nA= 0; *nB= 0; *nI= 0;
+	nV= 0; nA= 0; nB= 0; nI= 0;
 	for(int index=0; index<nx*ny*nz; index ++){	
 		int type, i, j, k;
 		if_re >> type >> i >> j >> k;
@@ -111,61 +112,24 @@ void class_system::read_restart(char name_restart[], int* const states000, int &
 		
 		*(states000+index)= type;
 		
-		if     (type== 0) (*nV) ++;
-		else if(type==+1) (*nA) ++;
-		else if(type==-1) (*nB) ++;
+		if     (type== 0) nV ++;
+		else if(type==+1) nA ++;
+		else if(type==-1) nB ++;
 		else		  error(1, "(read_restart) an unrecognizable state", 1, type);
 	}
-	if(*nV+*nA+*nB+*nI != nx*ny*nz) error(1, "(read_restart) the number inconsistent", 2, *nV+*nA+*nB+*nI, nx*ny*nz);
+	if(nV+nA+nB+nI != nx*ny*nz) error(1, "(read_restart) the number inconsistent", 2, nV+nA+nB+nI, nx*ny*nz);
 
 	cout << "The configuration has been generated from the restart file!" << endl;
-	cout << "Vacancy: " << *nV << endl;
-	cout << "Atype A: " << *nA << ", pct: " << 100* (double)*nA / ntotal << "%" << endl;
-	cout << "Atype B: " << *nB << ", pct: " << 100* (double)*nB / ntotal << "%" << endl;
-	cout << "Interstitials: " << *nI << endl;
+	cout << "Vacancy: " << nV << endl;
+	cout << "Atype A: " << nA << ", pct: " << 100* (double)nA / ntotal << "%" << endl;
+	cout << "Atype B: " << nB << ", pct: " << 100* (double)nB / ntotal << "%" << endl;
+	cout << "Interstitials: " << nI << endl;
 	
 	if_re.close();
 }
 
-void class_system::write_conf(long long int timestep, double time, int *ptr_states){
-	ofstream of_xyz;
-	ofstream of_ltcp;
-	if(0==timestep){
-		of_xyz.open("t0.xyz");
-		of_ltcp.open("t0.ltcp");
-	}
-	else{
-		char name_xyz[40], name_ltcp[40];
-		sprintf(name_xyz, "%lld", timestep);  strcat(name_xyz, ".xyz");
-		sprintf(name_ltcp, "%lld", timestep); strcat(name_ltcp, ".ltcp");
-		
-		of_xyz.open(name_xyz);
-		of_ltcp.open(name_ltcp);
-	}
 
-	if(!of_xyz.is_open()) error(1, "(write_conf) xyz file is not opened!");
-	if(!of_ltcp.is_open()) error(1, "(write_conf) ltcp file is not opened!");
-	
-	of_xyz << nx*ny*nz << "\n" << "xyz " << timestep << " " << time << "\n";
-	of_ltcp << nx*ny*nz << "\n" << "ltcp " << timestep << " " << time << "\n";
-	for(int i=0; i<nx; i ++){
-		for(int j=0; j<ny; j ++){
-			for(int k=0; k<nz; k ++){
-				double x= i*vbra[0][0] + j*vbra[1][0] + k*vbra[2][0];
-				double y= i*vbra[0][1] + j*vbra[1][1] + k*vbra[2][1];
-				double z= i*vbra[0][2] + j*vbra[1][2] + k*vbra[2][2];
-				
-				of_xyz  << *ptr_states << " " << x << " " << y << " " << z << "\n";
-				of_ltcp << *ptr_states << " " << i << " " << j << " " << k << "\n";
-
-				ptr_states ++;
-	}}}
-	
-	of_xyz.close();
-	of_ltcp.close();
-}
-
-void class_system::init_par(){
+void class_initial::init_par(){
 	// 1st-nn class 1
 	c1_44= ( (eAA1AA -8*eAA1A -8*eAA1B +12*eAA1AB +2*eAA1BB +12*eAB1BB -8*eA1BB -8*eB1BB +eBB1BB) +
 	       (48*eA1AB -12*eAB1AB +48*eAB1B) + (-48*eA1V +48*eV1V -48*eV1B) + (16*eA1A +32*eA1B +16*eB1B) )/576; 
@@ -236,7 +200,7 @@ void class_system::init_par(){
 	else is_e2nbr= true;
 
 	// print out the parameters to log file
-	cout << "Parameters:" << endl; 
+	cout << "\n##### Energy calculation parameters #####" << endl; 
 	
 	cout << "beta= " << beta << endl;
 	printf("mu= %f %f\n", muA, muB);
@@ -258,7 +222,7 @@ void class_system::init_par(){
 	printf("B-B:   %f, B-BB: %f\n", eB2B, eB2BB);
 	printf("BB-BB: %f\n", eBB2BB);
 	
-	cout << "\nIsing formulation constants:" << endl;
+	cout << "Ising formulation constants:" << endl;
 	cout << "(1st neighbor)" << endl;
 	printf("Class 1\nC44: %f, C42: %f, C22: %f\n", c1_44, c1_42, c1_22);
 	printf("Class 2\nC43: %f, C41: %f, C32: %f, C21: %f\n", c1_43, c1_41, c1_32, c1_21);
@@ -267,4 +231,23 @@ void class_system::init_par(){
 	printf("Class 1\nC44: %f, C42: %f, C22: %f\n", c2_44, c2_42, c2_22);
 	printf("Class 2\nC43: %f, C41: %f, C32: %f, C21: %f\n", c2_43, c2_41, c2_32, c2_21);
 	printf("Class 3\nC33: %f, C31: %f, C11: %f\n", c2_33, c2_31, c2_11);
+
+	if(is_e2nbr) 	cout << "\n2nd nn parameters are non-zero" << endl;
+	else		cout << "\n2nd nn are 0, skip 2nd-nn calculations" << endl;
+}
+
+void class_initial::init_list_vcc(){
+	int n_check= 0;
+
+	for(int i_ltcp=0; i_ltcp<nx*ny*nz; i_ltcp ++){
+		if(0==*(states000+i_ltcp)){
+			n_check ++;
+			list_vcc.push_back(i_ltcp);
+			ix.push_back(0);
+			iy.push_back(0);
+			iz.push_back(0);
+		}
+	}
+
+	if(n_check != nV) error(2, "(init_list_vcc) Vacancy number inconsistent", 2, n_check, nV);
 }

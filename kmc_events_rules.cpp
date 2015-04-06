@@ -85,8 +85,14 @@ double class_events::cal_energy(int x1, int y1, int z1, int x2, int y2, int z2){
 }
 
 double class_events::cal_energy(int* const states_ce){
-	int sum_k1=0, sum_j1=0, sum_u1=0;
-	int sum_k2=0, sum_j2=0, sum_u2=0;
+	// sums of 1st nn
+	int s1um44=0, s1um42=0, s1um22=0;		// class 1
+	int s1um43=0, s1um41=0, s1um32=0, s1um21=0;	// class 2
+	int s1um33=0, s1um31=0, s1um11=0;		// class 3
+	// sums of 2nd nn
+	int s2um44=0, s2um42=0, s2um22=0;		// class 1
+	int s2um43=0, s2um41=0, s2um32=0, s2um21=0;	// class 2
+	int s2um33=0, s2um31=0, s2um11=0;		// class 3
 	for(int i=0; i<nx; i ++){
 		for(int j=0; j<ny; j ++){
 			for(int k=0; k<nz; k ++){
@@ -105,10 +111,17 @@ double class_events::cal_energy(int* const states_ce){
 					int state_j1= *(states_ce + xj*ny*nz + yj*nz + zj);
 					if(0==state_j1) continue;
 
-					// calculating the energy for ABV system. If it's not ABV system, please modify it; also, e2nbr below 
-					if(! is_o1vcc) sum_k1 ++;	// i**2= 1
-					sum_j1 += (state_i * state_j1); // i*j
-					sum_u1 += (state_i + state_j1); // i**2*j+i*j**2= j+i
+					// calculating the energy for ABVI system. 1st nn
+					s1um44 += pow(state_i, 4) * pow(state_j1, 4);
+					s1um43 += pow(state_i, 4) * pow(state_j1, 3) + pow(state_i, 3) * pow(state_j1, 4);
+					s1um42 += pow(state_i, 4) * pow(state_j1, 2) + pow(state_i, 2) * pow(state_j1, 4);
+					s1um41 += pow(state_i, 4) * pow(state_j1, 1) + pow(state_i, 1) * pow(state_j1, 4);
+					s1um33 += pow(state_i, 3) * pow(state_j1, 3);
+					s1um32 += pow(state_i, 3) * pow(state_j1, 2) + pow(state_i, 2) * pow(state_j1, 3);
+					s1um31 += pow(state_i, 3) * pow(state_j1, 1) + pow(state_i, 1) * pow(state_j1, 3);
+					s1um22 += pow(state_i, 2) * pow(state_j1, 2);
+					s1um21 += pow(state_i, 2) * pow(state_j1, 1) + pow(state_i, 1) * pow(state_j1, 2);
+					s1um11 += pow(state_i, 1) * pow(state_j1, 1);
 				}
 				
 				if(! is_e2nbr) continue;
@@ -121,14 +134,29 @@ double class_events::cal_energy(int* const states_ce){
 					int state_j2= *(states_ce + xj*ny*nz + yj*nz + zj);
 					if(0==state_j2) continue;
 
-					// e2nbr version of Ising model formulation
-					if(! is_o1vcc) sum_k2 ++;
-					sum_j2 += (state_i * state_j2); 
-					sum_u2 += (state_i + state_j2);
+					// calculating the energy: 2nd nn
+					s2um44 += pow(state_i, 4) * pow(state_j2, 4);
+					s2um43 += pow(state_i, 4) * pow(state_j2, 3) + pow(state_i, 3) * pow(state_j2, 4);
+					s2um42 += pow(state_i, 4) * pow(state_j2, 2) + pow(state_i, 2) * pow(state_j2, 4);
+					s2um41 += pow(state_i, 4) * pow(state_j2, 1) + pow(state_i, 1) * pow(state_j2, 4);
+					s2um33 += pow(state_i, 3) * pow(state_j2, 3);
+					s2um32 += pow(state_i, 3) * pow(state_j2, 2) + pow(state_i, 2) * pow(state_j2, 3);
+					s2um31 += pow(state_i, 3) * pow(state_j2, 1) + pow(state_i, 1) * pow(state_j2, 3);
+					s2um22 += pow(state_i, 2) * pow(state_j2, 2);
+					s2um21 += pow(state_i, 2) * pow(state_j2, 1) + pow(state_i, 1) * pow(state_j2, 2);
+					s2um11 += pow(state_i, 1) * pow(state_j2, 1);
 				}
 	}}}
 
-	double sum_energy = 0.5*((cons_k1*sum_k1 + cons_j1*sum_j1 + cons_u1*sum_u1) + (cons_k2*sum_k2 + cons_j2*sum_j2 + cons_u2*sum_u2)) + cons_h0 + kterm;
+	double sum_energy= 0.5*( // still need add constants
+		c1_44 * s1um44 + c1_43 * s1um43 + c1_42 * s1um42 + c1_41 * s1um41 +
+		c1_33 * s1um33 + c1_32 * s1um32 + c1_31 * s1um31 +
+		c1_22 * s1um22 + c1_21 * s1um21 +
+		c1_11 * s1um11 +
+		c2_44 * s2um44 + c2_43 * s2um43 + c2_42 * s2um42 + c2_41 * s2um41 +
+		c2_33 * s2um33 + c2_32 * s2um32 + c2_31 * s2um31 +
+		c2_22 * s2um22 + c2_21 * s2um21 +
+		c2_11 * s2um11	);
 	return sum_energy;
 }
 

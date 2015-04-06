@@ -8,9 +8,9 @@ using namespace std;
 
 double class_events::vac_jump(vector <double> &v_rate, vector <int> &v_ivcc, vector <int> &v_inbr){
 	double sum_rate= 0;
-	if(*nV != list_vcc.size()) error(2, "(vac_jump) vacancy number inconsistent");
+	if(nV != list_vcc.size()) error(2, "(vac_jump) vacancy number inconsistent");
 	
-	for(int ivcc=0; ivcc < *nV; ivcc ++){
+	for(int ivcc=0; ivcc < nV; ivcc ++){
 		int i= (int) (list_vcc.at(ivcc)/nz)/ny;
 		int j= (int) (list_vcc.at(ivcc)/nz)%ny;
 		int k= (int)  list_vcc.at(ivcc)%nz;
@@ -87,7 +87,7 @@ void class_events::vac_recb(int vpos[3]){ // want to change to a n-fold MC? don'
 		*(states + x*ny*nz  + y*nz  + z) = type_int;
 		cout << "|" << type_vac << "| and |" << type_int << "|" << endl;
 				
-//		(*nV) --; (*nI) --; (*nAtotal) +=2;
+//		nV --; nI --; write change of A, B;
 
 		error(2, "(vac_recb) are you sure you change the vcc_list to vector? if nV changes");
 	}

@@ -64,7 +64,7 @@ int class_events::int_eval(int xi, int yi, int zi){
 		*(states +  x*ny*nz +  y*nz +  z)= type_vac;
 		cout << "|" << type_int << "| and |" << type_vac << "|" << endl;
 				
-//		(*nV) --; (*nI) --; (*nAtotal) +=2;
+//		nV --; nI --; write down the change of A, B
 		error(2, "(int_eval) are you sure you change the vcc_list to vector? if nV changes");
 		
 		return 1;
