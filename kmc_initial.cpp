@@ -20,9 +20,8 @@ void class_initial::ltc_constructor(){
 	double vbra_bcc[3][3]= {{-0.5,  0.5,  0.5}, { 0.5, -0.5,  0.5}, { 0.5,  0.5, -0.5}};
 		
 	// BCC: index vectors of negibhor atoms: 1st nearest
-	int v1nbr_bcc[8][3]= {{ 1,  0,  0}, { 0,  1,  0}, { 0,  0,  1},
- 		              {-1,  0,  0}, { 0, -1,  0}, { 0,  0, -1},
- 			      { 1,  1,  1}, {-1, -1, -1}	     };
+	int v1nbr_bcc[8][3]= {{ 1,  0,  0}, { 0,  1,  0}, { 0,  0,  1}, { 1,  1,  1},
+ 		              {-1,  0,  0}, { 0, -1,  0}, { 0,  0, -1}, {-1, -1, -1}};
 	int v2nbr_bcc[6][3]= {{ 0,  1,  1}, { 1,  0,  1}, { 0,  1,  1},
  		              { 0, -1, -1}, {-1,  0, -1}, { 0, -1, -1}};
 
@@ -41,11 +40,17 @@ void class_initial::ltc_constructor(){
 	for(int i=0; i<n1nbr; i ++){ // v1nbr
 		for(int j=0; j<3; j ++){
 			v1nbr[i][j]= (*(ptr_v1nbr+i))[j];
-	}}
+			if(i>=n1nbr/2)
+				if(v1nbr[i][j] != -v1nbr[i-n1nbr/2][j]) error(1, "(ltc_constructor) v1nbr isn't symmetry");
+		}
+	}
 	for(int i=0; i<n2nbr; i ++){ // v2nbr
 		for(int j=0; j<3; j ++){
 			v2nbr[i][j]= (*(ptr_v2nbr+i))[j];
-	}}
+			if(i>=n2nbr/2)
+				if(v2nbr[i][j] != -v2nbr[i-n2nbr/2][j]) error(1, "(ltc_constructor) v1nbr isn't symmetry");
+		}
+	}
 }
 
 void class_initial::init_states_array(int nVset, double compA){
@@ -57,23 +62,31 @@ void class_initial::init_states_array(int nVset, double compA){
 	for(int i=0; i<nx*ny*nz; i++){	
 		if((i%putV==0) && (Vcount<nVset)){
 			Vcount ++;
-			*(states000 + i)= 0;
+			*(&states[0][0][0] + i)= 0;
 		}
 		else{
 			double ran= ran_generator();
 
-			if(ran < compA) 	*(states000 + i)= +1;
-			else			*(states000 + i)= -1;
+			if(ran < compA) 	*(&states[0][0][0] + i)= +1;
+			else			*(&states[0][0][0] + i)= -1;
 		}
 	}
 
-	nV= 0; nA= 0; nB= 0;
+	nV= 0; nA= 0; nB= 0; nAA= 0; nBB= 0; nAB= 0;
 	////////// CHECK //////////
 	for(int i=0; i<nx*ny*nz; i++){ 
-		if(*(states000+i)==  0)		nV ++;
-		else if(*(states000+i)== +1)	nA ++;
-		else if(*(states000+i)== -1)	nB ++;
-		else				error(1, "(init_states_array) a state type is unrecognizable", 1, *(states000+i));
+		if(*(&states[0][0][0]+i)==  0){
+			vcc temp_vcc;
+			list_vcc.push_back(temp_vcc);
+			list_vcc[nV].ltcp= i;
+			list_vcc[nV].ix= 0;
+			list_vcc[nV].iy= 0;
+			list_vcc[nV].iz= 0;
+							nV ++;
+		}
+		else if(*(&states[0][0][0]+i)== +1)	nA ++;
+		else if(*(&states[0][0][0]+i)== -1)	nB ++;
+		else				error(1, "(init_states_array) a state type is unrecognizable", 1, *(&states[0][0][0]+i));
 	}
 	if(nV != nVset) error(1, "(init_states_array) The number of vacancies is not nVset", 2, nV, nVset);
 #define TOL 0.01
@@ -104,26 +117,55 @@ void class_initial::read_restart(char name_restart[], long long int &ts_initial,
 	ts_initial= timestep;
 	time_initial= time;
 
-	nV= 0; nA= 0; nB= 0; nI= 0;
+	nV= 0; nA= 0; nB= 0; nAA= 0; nBB= 0; nAB= 0;
 	for(int index=0; index<nx*ny*nz; index ++){	
-		int type, i, j, k;
+		int type, i, j, k, ix, iy, iz, dir, head;
 		if_re >> type >> i >> j >> k;
 		if(index != i*ny*nz+j*nz+k) error(1, "(read_restart) the input index inconsistent");
-		
-		*(states000+index)= type;
-		
-		if     (type== 0) nV ++;
-		else if(type==+1) nA ++;
-		else if(type==-1) nB ++;
-		else		  error(1, "(read_restart) an unrecognizable state", 1, type);
+	
+		if( 0==type){
+			if_re >> ix >> iy >> iz;
+			
+			vcc temp_vcc;
+			list_vcc.push_back(temp_vcc);
+			list_vcc[nV].ltcp= index;
+			list_vcc[nV].ix= ix;
+			list_vcc[nV].iy= iy;
+			list_vcc[nV].iz= iz;
+
+			nV ++;
+		}
+		else if	( 1==type) nA ++;
+		else if	(-1==type) nB ++;
+		else{
+			if_re >> ix >> iy >> iz >> dir >> head;
+
+			if	(type== 2) nAA ++;
+			else if (type==-2) nBB ++;
+			else if (type== 3){nAB ++; type= 0; *(&itlAB[0][0][0]+index)= true;}
+			
+			itl temp_itl;
+			list_itl.push_back(temp_itl);
+			list_itl[nAA+nAB+nBB-1].ltcp= index;
+			list_itl[nAA+nAB+nBB-1].ix= ix;
+			list_itl[nAA+nAB+nBB-1].iy= iy;
+			list_itl[nAA+nAB+nBB-1].iz= iz;
+			list_itl[nAA+nAB+nBB-1].dir= dir;
+			list_itl[nAA+nAB+nBB-1].head= head;
+			list_itl[nAA+nAB+nBB-1].type= type;
+		}
+
+		*(&states[0][0][0]+index)= type;
 	}
-	if(nV+nA+nB+nI != nx*ny*nz) error(1, "(read_restart) the number inconsistent", 2, nV+nA+nB+nI, nx*ny*nz);
+	if(nV+nA+nB+nAA+nBB+nAB != nx*ny*nz) error(1, "(read_restart) the number inconsistent", 2, nV+nA+nB+nAA+nBB+nAB, nx*ny*nz);
 
 	cout << "The configuration has been generated from the restart file!" << endl;
 	cout << "Vacancy: " << nV << endl;
 	cout << "Atype A: " << nA << ", pct: " << 100* (double)nA / ntotal << "%" << endl;
 	cout << "Atype B: " << nB << ", pct: " << 100* (double)nB / ntotal << "%" << endl;
-	cout << "Interstitials: " << nI << endl;
+	cout << " Itl AA: " << nAA << endl;
+	cout << " Itl AB: " << nAB << endl;
+	cout << " Itl BB: " << nBB << endl;
 	
 	if_re.close();
 }
@@ -204,7 +246,9 @@ void class_initial::init_par(){
 	
 	cout << "beta= " << beta << endl;
 	printf("mu= %f %f\n", muA, muB);
-	printf("Em= %f %f\n", emA, emB);
+	printf("Vacancy Em= %f %f\n", emvA, emvB);
+	printf("Interstitial Em= %f %f\n", emiA, emiB);
+	printf("Rotation Er(AA, AB, BB)= %f %f %f\n", erAA, erAB, erBB);
 	
 	cout << "Input epsilons:" << endl;
 	cout << "(1st neigbor)" << endl;
@@ -236,18 +280,3 @@ void class_initial::init_par(){
 	else		cout << "\n2nd nn are 0, skip 2nd-nn calculations" << endl;
 }
 
-void class_initial::init_list_vcc(){
-	int n_check= 0;
-
-	for(int i_ltcp=0; i_ltcp<nx*ny*nz; i_ltcp ++){
-		if(0==*(states000+i_ltcp)){
-			n_check ++;
-			list_vcc.push_back(i_ltcp);
-			ix.push_back(0);
-			iy.push_back(0);
-			iz.push_back(0);
-		}
-	}
-
-	if(n_check != nV) error(2, "(init_list_vcc) Vacancy number inconsistent", 2, n_check, nV);
-}

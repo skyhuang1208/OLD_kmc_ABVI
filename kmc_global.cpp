@@ -18,14 +18,17 @@ int v1nbr[MAX_NNBR][3];	// indexes vectors of 1st neighbors
 int v2nbr[MAX_NNBR][3];	// indexes vectors of 2nd neighbors
 double vbra[3][3];	// coordinate vectors of bravice lattice
 
-int nA, nB, nV, nI;
+int nA, nB, nV, nAA, nBB, nAB;
+int sum_mag; // sum of magnitization; should be conserved
+int states[nx][ny][nz];
+bool itlAB[nx][ny][nz]= {false};
 
 FILE * his_sol;		// history file of solute atoms
-FILE * his_vcc;		// history file of vacancy and time: record every several steps
+FILE * his_def;		// history file of defects
+vector <int> actions_sol[2]; // A list contains solute atom moves from [0] to [1]
 
-vector <int> list_vcc;	 // A list contains indexs of all vacancies
-vector <int> list_int;	 // A list contains indexs of all interstitials
-vector <int> ix, iy, iz; // image box of the vacancy ONE V
+vector <vcc> list_vcc;	 // A list contains information of all vacancies
+vector <itl> list_itl;   // A list contains information of all interstitials
 
 double h0;
 double c1_44, c1_43, c1_42, c1_41, c1_33, c1_32, c1_31, c1_22, c1_21, c1_11;
@@ -91,9 +94,11 @@ int pbc(int x_, int nx_){ // Periodic Boundary Condition
 	else			return (x_ - nx_);
 }
 
-void write_conf(int *ptr_states){
+void write_conf(){
 	ofstream of_xyz;
 	ofstream of_ltcp;
+	
+	// determine the names of conf files
 	if(0==timestep){
 		of_xyz.open("t0.xyz");
 		of_ltcp.open("t0.ltcp");
@@ -107,9 +112,16 @@ void write_conf(int *ptr_states){
 		of_ltcp.open(name_ltcp);
 	}
 
-	if(!of_xyz.is_open()) error(1, "(write_conf) xyz file is not opened!");
-	if(!of_ltcp.is_open()) error(1, "(write_conf) ltcp file is not opened!");
+	if(!of_xyz.is_open()) error(1, "(write_conf) xyz file is not opened!");		// check
+	if(!of_ltcp.is_open()) error(1, "(write_conf) ltcp file is not opened!");	// check
 	
+	// construct temp. "Defect" tables containing IDs to access the lists faster
+	int idvcc[nx][ny][nz]= {-1};
+	int iditl[nx][ny][nz]= {-1};
+	for(int i=0; i<list_vcc.size(); i ++) *(&idvcc[0][0][0]+list_vcc[i].ltcp)= i;
+	for(int i=0; i<list_itl.size(); i ++) *(&iditl[0][0][0]+list_itl[i].ltcp)= i;
+
+	// write out data
 	of_xyz << nx*ny*nz << "\n" << "xyz " << timestep << " " << totaltime << "\n";
 	of_ltcp << nx*ny*nz << "\n" << "ltcp " << timestep << " " << totaltime << "\n";
 	for(int i=0; i<nx; i ++){
@@ -118,18 +130,39 @@ void write_conf(int *ptr_states){
 				double x= i*vbra[0][0] + j*vbra[1][0] + k*vbra[2][0];
 				double y= i*vbra[0][1] + j*vbra[1][1] + k*vbra[2][1];
 				double z= i*vbra[0][2] + j*vbra[1][2] + k*vbra[2][2];
-				
-				of_xyz  << *ptr_states << " " << x << " " << y << " " << z << "\n";
-				of_ltcp << *ptr_states << " " << i << " " << j << " " << k << "\n";
+			
+				if(-1==states[i][j][k] || 1==states[i][j][k]){
+					of_xyz  << states[i][j][k] << " " << x << " " << y << " " << z << endl;
+					of_ltcp << states[i][j][k] << " " << i << " " << j << " " << k << endl;
+				}
+				else if (0==states[i][j][k] && (! itlAB[i][j][k])){
+					int id= idvcc[i][j][k]; 
+					if(-1==id) error(2, "(write_conf) idvcc incorrect", 1, id);
+					of_xyz  << states[i][j][k] << " " << x << " " << y << " " << z << " "
+						<< list_vcc[id].ix << " " << list_vcc[id].iy << " " << list_vcc[id].iz << endl;
+					of_ltcp << states[i][j][k] << " " << i << " " << j << " " << k << " " 
+						<< list_vcc[id].ix << " " << list_vcc[id].iy << " " << list_vcc[id].iz << endl;
+				}
+				else{
+					int id= iditl[i][j][k]; 
+					if(-1==id) error(2, "(write_conf) iditl incorrect", 1, id);
 
-				ptr_states ++;
+					int type= states[i][j][k];
+					if(0==type) type= 3;
+					of_xyz  << type << " " << x << " " << y << " " << z << " " 
+						<< list_itl[id].ix << " " << list_itl[id].iy << " " << list_itl[id].iz << " "
+						<< list_itl[id].dir << " " << list_itl[id].head << endl;
+					of_ltcp << type << " " << i << " " << j << " " << k << " "
+						<< list_itl[id].ix << " " << list_itl[id].iy << " " << list_itl[id].iz << " "
+						<< list_itl[id].dir << " " << list_itl[id].head << endl;
+				}
 	}}}
 	
 	of_xyz.close();
 	of_ltcp.close();
 }
 
-void write_hissol(const vector<int> (&actions_sol)[2]){
+void write_hissol(){
 	vector <int> sol_from;
 	vector <int> sol_to;
 
@@ -157,11 +190,15 @@ skip_push_back:;
 		fprintf(his_sol, "%d %d\n", sol_from.at(j), sol_to.at(j));
 }
 
-void write_hisvcc(){
-	fprintf(his_vcc, "%lu\n", list_vcc.size());
-	fprintf(his_vcc, "T: %lld %e\n", timestep, totaltime);
+void write_hisdef(){
+	fprintf(his_def, "%lu\n", list_vcc.size()+list_itl.size());
+	fprintf(his_def, "T: %lld %e\n", timestep, totaltime);
 	for(int i=0; i<list_vcc.size(); i++){
-		fprintf(his_vcc, "%d %d %d %d\n", list_vcc.at(i), ix.at(i), iy.at(i), iz.at(i));
+		fprintf(his_def, "0 %d %d %d %d\n", list_vcc[i].ltcp, list_vcc[i].ix, list_vcc[i].iy, list_vcc[i].iz);
+	}
+	for(int i=0; i<list_itl.size(); i++){
+		int type= list_itl[i].type;
+		if(0==type) type= 3;
+		fprintf(his_def, "%d %d %d %d %d\n", type, list_itl[i].ltcp, list_itl[i].ix, list_itl[i].iy, list_itl[i].iz);
 	}
 }
-
