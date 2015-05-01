@@ -29,12 +29,14 @@ extern bool itlAB[nx][ny][nz];
 // Files
 extern FILE * his_sol;		// history file of solute atoms
 extern FILE * his_def;		// history file of vacancies and interstitials: record every several steps
+extern FILE * out_engy;		// out file for energy calculations
 
 // Solute information for his_sol
 extern vector <int> actions_sol[2]; // A list contains solute atom moves from [0] to [1]
 
 // Parameters for mechanisms
 const double dis_rec= par_dis_rec;	// recombination distance
+const double time_genr= 1.0/(par_dpasm1*nx*ny*nz);
 
 // Defect lists
 struct vcc{ // information of an vacancy
@@ -42,7 +44,6 @@ struct vcc{ // information of an vacancy
 	int ix, iy, iz;
 };
 struct itl{ // information of an interstitial; can declare a vector to store all interstitials
-	int type;
 	int ltcp;
 	int dir; // direction
 	int head; // the atom of the itl that in the front along the dir; useful for AB itl

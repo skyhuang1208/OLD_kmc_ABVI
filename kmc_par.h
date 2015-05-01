@@ -7,23 +7,28 @@ const int    par_nx=                       64;
 const int    par_ny=                       64;
 const int    par_nz=                       64;
 
-const double par_compA=                  0.97; // composition of A atoms
+const double par_compA=                  0.70; // composition of A atoms
 const int    par_nV=                        1;
 
 const double	    par_time=            1e13; 	// toal time (s)
-const long long int par_step=             2e3; 	// toal timestep (give a minus step to ignore this quiterior to end the simulation)
-const long long int par_confts=    par_step/5;	// timestep that output a conf file for restart later
-const long long int par_his=		  1e2;
+const long long int par_step=             1e4; 	// toal timestep (give a minus step to ignore this quiterior to end the simulation)
+
+const long long int step_log=	 par_step/1e4; 
+const long long int step_confts= par_step/5e0;	// timestep that output a conf file for restart later
+const long long int step_out=	 par_step/5e2; 
+const long long int step_his=		  1e2;
+
 
 const bool par_isrestart=		    false;
 
 const char   par_name_sol[20]=      "history.sol";
 const char   par_name_def[20]=      "history.def";
+const char   par_name_engy[20]=      "out.energy";
 
 // Parameters for events
-const double par_dis_rec=	1.0; // recombination distance
-const double par_time_genr=    1e10; 
-const int    par_step_genr=     1e1; 
+const double par_dis_rec=	3.0; // recombination distance
+const double par_dpasm1=       1e-6; 
+const long long int    par_step_genr=     1e1; 
 
 // Ising model energy calculation parameters
 const double par_temp=                       773.0; // 500c

@@ -25,6 +25,7 @@ bool itlAB[nx][ny][nz]= {false};
 
 FILE * his_sol;		// history file of solute atoms
 FILE * his_def;		// history file of defects
+FILE * out_engy;	// out file of energy calculations
 vector <int> actions_sol[2]; // A list contains solute atom moves from [0] to [1]
 
 vector <vcc> list_vcc;	 // A list contains information of all vacancies
@@ -115,12 +116,6 @@ void write_conf(){
 	if(!of_xyz.is_open()) error(1, "(write_conf) xyz file is not opened!");		// check
 	if(!of_ltcp.is_open()) error(1, "(write_conf) ltcp file is not opened!");	// check
 	
-	// construct temp. "Defect" tables containing IDs to access the lists faster
-	int idvcc[nx][ny][nz]= {-1};
-	int iditl[nx][ny][nz]= {-1};
-	for(int i=0; i<list_vcc.size(); i ++) *(&idvcc[0][0][0]+list_vcc[i].ltcp)= i;
-	for(int i=0; i<list_itl.size(); i ++) *(&iditl[0][0][0]+list_itl[i].ltcp)= i;
-
 	// write out data
 	of_xyz << nx*ny*nz << "\n" << "xyz " << timestep << " " << totaltime << "\n";
 	of_ltcp << nx*ny*nz << "\n" << "ltcp " << timestep << " " << totaltime << "\n";
@@ -136,16 +131,15 @@ void write_conf(){
 					of_ltcp << states[i][j][k] << " " << i << " " << j << " " << k << endl;
 				}
 				else if (0==states[i][j][k] && (! itlAB[i][j][k])){
-					int id= idvcc[i][j][k]; 
-					if(-1==id) error(2, "(write_conf) idvcc incorrect", 1, id);
+					int id; for(id=0; list_vcc[id].ltcp != i*ny*nz+j*nz+k; id ++);
+					
 					of_xyz  << states[i][j][k] << " " << x << " " << y << " " << z << " "
 						<< list_vcc[id].ix << " " << list_vcc[id].iy << " " << list_vcc[id].iz << endl;
 					of_ltcp << states[i][j][k] << " " << i << " " << j << " " << k << " " 
 						<< list_vcc[id].ix << " " << list_vcc[id].iy << " " << list_vcc[id].iz << endl;
 				}
 				else{
-					int id= iditl[i][j][k]; 
-					if(-1==id) error(2, "(write_conf) iditl incorrect", 1, id);
+					int id; for(id=0; list_itl[id].ltcp != i*ny*nz+j*nz+k; id ++);
 
 					int type= states[i][j][k];
 					if(0==type) type= 3;
@@ -197,8 +191,9 @@ void write_hisdef(){
 		fprintf(his_def, "0 %d %d %d %d\n", list_vcc[i].ltcp, list_vcc[i].ix, list_vcc[i].iy, list_vcc[i].iz);
 	}
 	for(int i=0; i<list_itl.size(); i++){
-		int type= list_itl[i].type;
+		int type= *(&states[0][0][0]+list_itl[i].ltcp);
 		if(0==type) type= 3;
 		fprintf(his_def, "%d %d %d %d %d\n", type, list_itl[i].ltcp, list_itl[i].ix, list_itl[i].iy, list_itl[i].iz);
 	}
 }
+

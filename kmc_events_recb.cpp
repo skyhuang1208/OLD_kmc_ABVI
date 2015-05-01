@@ -6,11 +6,11 @@
 
 using namespace std;
 
-void class_events::recb_rules(int ii, int iv){ // execute the recombination
+void class_events::rules_recb(int ii, int iv){ // execute the recombination
 	int iltcp= list_itl[ii].ltcp;
 	int vltcp= list_vcc[iv].ltcp;
 
-	if(*(&states[0][0][0]+vltcp) != 0) error(2, "(recb_rules) the vacancy isnt 0", 1, *(&states[0][0][0]+vltcp));
+	if(*(&states[0][0][0]+vltcp) != 0) error(2, "(rules_recb) the vacancy isnt 0", 1, *(&states[0][0][0]+vltcp));
 	int ja; // the jumping atom
 	double ran;
 	switch(*(&states[0][0][0]+iltcp)){
@@ -29,7 +29,7 @@ void class_events::recb_rules(int ii, int iv){ // execute the recombination
 			nBB --; nV --; nB +=2;
 			ja=-1;
 			break;
-		default: error(2, "(recb_rules) an unknown itl type", 1, *(&states[0][0][0]+iltcp));
+		default: error(2, "(rules_recb) an unknown itl type", 1, *(&states[0][0][0]+iltcp));
 	}
 			
 	*(&states[0][0][0]+iltcp) -=ja;
@@ -51,10 +51,10 @@ void class_events::recb_rules(int ii, int iv){ // execute the recombination
 void class_events::recb_dir(int index){
 	vector <int> list_rec; // recombination candidates
 
-	int a1= (int) (list_itl[index].ltcp/nz)/ny; // The D position
+	int a1= (int) (list_itl[index].ltcp/nz)/ny; // The itl position
 	int a2= (int) (list_itl[index].ltcp/nz)%ny;
 	int a3= (int)  list_itl[index].ltcp%nz;
-
+	
 	int idir= list_itl[index].dir;
 	for(int i=-rrecb_nnd; i<=rrecb_nnd; i ++){
 		int b1= pbc(a1+i*v1nbr[idir][0], nx);
@@ -67,24 +67,28 @@ void class_events::recb_dir(int index){
 	
 	if(list_rec.size() != 0){
 		double ran= ran_generator();
-		int index2= list_rec[(int) (ran*list_rec.size())];
+		int vltcp= list_rec[(int) (ran*list_rec.size())];
 	
-		recb_rules(index, index2);
+		for(int i=0; i<list_vcc.size(); i ++){
+			if(vltcp==list_vcc[i].ltcp){
+				rules_recb(index, i);
+				goto find_vcc;
+			}
+		}
+		error(2, "(recb_dir) no vcc found");
+find_vcc:;
 	}
 }
 
 bool class_events::cal_dis(int d1, int d2, int d3){
-	if((abs(d1)+abs(d2)+abs(d3))> rrecb_int) return false; // wilder range (valid for BCC)
-	else{
-		double x= d1*vbra[0][0] + d2*vbra[1][0] + d3*vbra[2][0];
-		double y= d1*vbra[0][1] + d2*vbra[1][1] + d3*vbra[2][1];
-		double z= d1*vbra[0][2] + d2*vbra[1][2] + d3*vbra[2][2];
+	double x= d1*vbra[0][0] + d2*vbra[1][0] + d3*vbra[2][0];
+	double y= d1*vbra[0][1] + d2*vbra[1][1] + d3*vbra[2][1];
+	double z= d1*vbra[0][2] + d2*vbra[1][2] + d3*vbra[2][2];
 
-		double dis2= x*x + y*y + z*z;
+	double dis2= x*x + y*y + z*z;
 
-		if(dis2 <= rrecb2) return true;
-		else		  return false;
-	}
+	if(dis2 <= rrecb2) return true;
+	else		  return false;
 }
 
 void class_events::recb_randomV(int index){
@@ -108,11 +112,11 @@ void class_events::recb_randomV(int index){
 		double ran= ran_generator();
 		int index2= list_rec[(int) (ran*list_rec.size())];
 	
-		recb_rules(index2, index);
+		rules_recb(index2, index);
 	}
 }
 
-void class_events::recb_randomI(int index){
+bool class_events::recb_randomI(int index){
 	vector <int> list_rec; // recombination candidates
 
 	int a1= (int) (list_itl[index].ltcp/nz)/ny; // The itl position
@@ -133,8 +137,11 @@ void class_events::recb_randomI(int index){
 		double ran= ran_generator();
 		int index2= list_rec[(int) (ran*list_rec.size())];
 	
-		recb_rules(index, index2);
+		rules_recb(index, index2);
+
+		return true;
 	}
+	else return false;
 }
 
 

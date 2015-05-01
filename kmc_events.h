@@ -29,25 +29,23 @@ class class_events{
 		double rrecb2;	// square of recombination distance
 		int rrecb_nnd;	// recombination distance in nearest neighbor distance
 
-		
 		////// functions of energy calculation //////
 		double cal_energy(int x1, int y1, int z1, int x2, int y2, int z2); 
 		int powc(int base, int index);
 
-		
 		////// functions for jumps(jumping rate calculations) //////
 		double cal_ratesV(vector <bool> &isvcc, vector <double> &rates, vector <int> &ilist, vector <int> &inbrs, vector <int> &jatom);
 		double cal_ratesI(vector <bool> &isvcc, vector <double> &rates, vector <int> &ilist, vector <int> &inbrs, vector <int> &jatom);
 		void itl_rules(int &itl, int &atom, int jatom);
-		void actual_jumpV(int dx, int dy, int dz, int x, int y, int z, int did);
-		void actual_jumpI(int dx, int dy, int dz, int x, int y, int z, int did, int jatom, int inbr);
+		void actual_jumpV(int vid, int nid);
+		void actual_jumpI(int iid, int nid, int jatom);
 		
 		///// functions for recombination /////
-		void recb_rules(int ii, int iv);
+		void rules_recb(int ii, int iv);
 		void recb_dir(int index);
 		bool cal_dis(int d1, int d2, int d3);
 		void recb_randomV(int index);
-		void recb_randomI(int index);
+		bool recb_randomI(int index);
 };
 
 #endif // KMC_EVENTS_INCLUDED

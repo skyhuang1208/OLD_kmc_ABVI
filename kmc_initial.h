@@ -11,7 +11,7 @@ using namespace std;
 
 class class_initial{
 	public:
-		class_initial(long long int &ts_bg, double &time_bg, char name_restart[]){
+		class_initial(long long int &ts_bg, double &time_bg, int nArg, char name_restart[]){
 			stpcpy(type_ltc, par_ltc);
 
 			ltc_constructor();	// execute constructor for vbra, n*nbr, and v*nbr
@@ -27,12 +27,13 @@ class class_initial{
 			cout << "\n####### Generating configuration... #######" << endl;
 			if(par_isrestart){
 				cout << "RESTART FROM restart file..." << endl;
-				if(name_restart == NULL) error(0, "when restart flag is true, nArg must be 2");
+				if(nArg != 2) error(0, "when restart flag is true, nArg must be 2");
 				
 				read_restart(name_restart, ts_bg, time_bg);
 				
 				his_sol= fopen(par_name_sol, "a");
 				his_def= fopen(par_name_def, "a");
+				out_engy= fopen(par_name_engy, "a");
 				cout << "Open " << par_name_sol << " & " << par_name_def << " with append mode" << endl;
 			}
 			else{
@@ -45,6 +46,7 @@ class class_initial{
 				
 				his_sol= fopen(par_name_sol, "w");
 				his_def= fopen(par_name_def, "w");
+				out_engy= fopen(par_name_engy, "w");
 				cout << "Open " << par_name_sol << " & " << par_name_def << "with write mode" << endl;
 			}
 			if(NULL==his_sol) error(2, "(class_events) the solute  history file was not opened!");
@@ -52,8 +54,8 @@ class class_initial{
 		
 			sum_mag= 2*nAA + 1*nA -1*nB -2*nBB;
 
-			actions_sol[0].reserve((int) (0.1*par_his)); // should be much larger than need
-			actions_sol[1].reserve((int) (0.1*par_his));
+			actions_sol[0].reserve((int) (0.1*step_his)); // should be much larger than need
+			actions_sol[1].reserve((int) (0.1*step_his));
 			
 			init_par();
 		}

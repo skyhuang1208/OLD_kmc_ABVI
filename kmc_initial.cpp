@@ -22,8 +22,8 @@ void class_initial::ltc_constructor(){
 	// BCC: index vectors of negibhor atoms: 1st nearest
 	int v1nbr_bcc[8][3]= {{ 1,  0,  0}, { 0,  1,  0}, { 0,  0,  1}, { 1,  1,  1},
  		              {-1,  0,  0}, { 0, -1,  0}, { 0,  0, -1}, {-1, -1, -1}};
-	int v2nbr_bcc[6][3]= {{ 0,  1,  1}, { 1,  0,  1}, { 0,  1,  1},
- 		              { 0, -1, -1}, {-1,  0, -1}, { 0, -1, -1}};
+	int v2nbr_bcc[6][3]= {{ 0,  1,  1}, { 1,  0,  1}, { 1,  1,  0},
+ 		              { 0, -1, -1}, {-1,  0, -1}, {-1, -1,  0}};
 
 	// Choose ltc structure
 	if     (strcmp(type_ltc, "SC ")==0){}
@@ -140,19 +140,18 @@ void class_initial::read_restart(char name_restart[], long long int &ts_initial,
 		else{
 			if_re >> ix >> iy >> iz >> dir >> head;
 
+			itl temp_itl;
+			list_itl.push_back(temp_itl);
+			list_itl[nAA+nAB+nBB].ltcp= index;
+			list_itl[nAA+nAB+nBB].ix= ix;
+			list_itl[nAA+nAB+nBB].iy= iy;
+			list_itl[nAA+nAB+nBB].iz= iz;
+			list_itl[nAA+nAB+nBB].dir= dir;
+			list_itl[nAA+nAB+nBB].head= head;
+			
 			if	(type== 2) nAA ++;
 			else if (type==-2) nBB ++;
 			else if (type== 3){nAB ++; type= 0; *(&itlAB[0][0][0]+index)= true;}
-			
-			itl temp_itl;
-			list_itl.push_back(temp_itl);
-			list_itl[nAA+nAB+nBB-1].ltcp= index;
-			list_itl[nAA+nAB+nBB-1].ix= ix;
-			list_itl[nAA+nAB+nBB-1].iy= iy;
-			list_itl[nAA+nAB+nBB-1].iz= iz;
-			list_itl[nAA+nAB+nBB-1].dir= dir;
-			list_itl[nAA+nAB+nBB-1].head= head;
-			list_itl[nAA+nAB+nBB-1].type= type;
 		}
 
 		*(&states[0][0][0]+index)= type;

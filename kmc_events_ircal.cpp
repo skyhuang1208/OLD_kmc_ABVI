@@ -8,6 +8,7 @@ using namespace std;
 
 double class_events::cal_ratesI(vector <bool> &isvcc, vector <double> &rates, vector <int> &ilist, vector <int> &inbrs, vector <int> &jatom){
 	double sum_rate= 0;
+	if(nAA + nAB + nBB != list_itl.size()) error(2, "(cal_ratesI) itl number inconsistent");
 	
 	for(int ii=0; ii < list_itl.size(); ii ++){ // ii: index of interstitial
 		int ltcp= list_itl[ii].ltcp;
@@ -47,6 +48,8 @@ double class_events::cal_ratesI(vector <bool> &isvcc, vector <double> &rates, ve
 				double e0= cal_energy(i, j, k, x, y, z);
 
 				itl_rules(states[i][j][k], states[x][y][z], ja); // perform an imaginary jump
+				if(stateI==states[i][j][k]) error(2, "imaginary jump error"); // delete it 
+				//(check if direct using states +/- jatom is faster than the itl_rules function)
 
 				double ediff= cal_energy(i, j, k, x, y, z) - e0;
 				
@@ -56,20 +59,17 @@ double class_events::cal_ratesI(vector <bool> &isvcc, vector <double> &rates, ve
 				// give em, mu and calculate rate
 				double em, mu;
 				if(1==ja) { em= emiA; mu= muA;} 
-				else	     { em= emiB; mu= muB;}
+				else	  { em= emiB; mu= muB;}
 				
-				if(a==dir || a==opp_dir){
-					if(ediff >0) rates.push_back(mu * exp(-beta*(em+ediff)));
-					else	     rates.push_back(mu * exp(-beta*(em)));
-				}
+				if(a==dir || a==opp_dir)
+					rates.push_back(mu * exp(-beta*(em+0.5*ediff)));
 				else{
 					double er; // rotation energy
 					if     ( 2==stateI) er= erAA;
 					else if(-2==stateI) er= erBB;
 					else		    er= erAB;
 
-					if(ediff >0) rates.push_back(mu * exp(-beta*(em+er+ediff)));
-					else	     rates.push_back(mu * exp(-beta*(em+er)));
+					rates.push_back(mu * exp(-beta*(em+er+0.5*ediff)));
 				}
 							
 				isvcc.push_back(false);
@@ -87,9 +87,9 @@ double class_events::cal_ratesI(vector <bool> &isvcc, vector <double> &rates, ve
 
 void class_events::itl_rules(int &itl, int &atom, int jatom){ // types of interstitial, atom, jumping atom
 	// itl changes to atom, atom changes to interstitial
-	if(itl != 2 && itl !=-2) error(2, "(itl_rules) input itl isn't an itl", 1, itl);
-	if(atom != 1 && atom !=-1) error(2, "(itl_rules) input atom isn't an atom", 1, atom);
-	if(jatom != 1 && jatom !=-1) error(2, "(itl_rules) input jatom isn't an atom", 1, jatom);
+	if(1 == abs(itl)) error(2, "(itl_rules) input itl isn't an itl", 1, itl);
+	if(1 != abs(atom)) error(2, "(itl_rules) input atom isn't an atom", 1, atom);
+	if(1 != abs(jatom)) error(2, "(itl_rules) input jatom isn't an atom", 1, jatom);
 	int sum_mag= itl + atom;
 
 	if     ( 2==itl){
