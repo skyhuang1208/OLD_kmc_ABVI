@@ -24,22 +24,28 @@ int main(int nArg, char *Arg[]){
 	int N_genr= 0;
 	cout << "TIMESTEP() TIME(s) GENR()	NA() NB()	NV() NAA() NAB() NBB()";
 	while((totaltime<= time_bg+par_time) && (timestep != ts_bg+par_step)){
-		// CALCULATIONS
-//		int int_t0, int_t1;
-//		int_t1  = (int) (totaltime/par_time_genr);
-//		if(int_t0 < int_t1){ // Generations
-//			for(int i=1; i<=(int_t1-int_t0); i ++) events.genr();
-//			N_genr += (int_t1-int_t0);
-//		}
-//		int_t0 = int_t1;
-
-		if(0==timestep%par_step_genr){
-			events.genr();
-			N_genr ++;
-		} 
-		
-		totaltime += events.jump(); // Defect jumps
 		timestep ++;
+		
+		// CALCULATIONS
+		double dt= events.jump(); // Defect jumps
+		totaltime += dt;
+
+		int int_t0, int_t1;
+		int_t1  = (int) (totaltime/time_genr);
+		if(dt==0){
+			events.genr(); // Frenkel pair genr
+			totaltime= (int_t1+1) * time_genr;
+			int_t1  = (int) (totaltime/time_genr);
+			N_genr ++;
+		}
+		else if(int_t1 > int_t0){ 
+			for(int i=0; i<(int_t1-int_t0); i ++){
+				events.genr(); // Frenkel pair genr
+				N_genr ++;
+			}
+		}
+		int_t0 = int_t1;
+
 
 		// OUTPUT DATA
 		if(0==timestep%step_log)

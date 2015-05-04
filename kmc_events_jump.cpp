@@ -46,7 +46,7 @@ double class_events::jump(){
 	if(2*nAA+nA-nB-2*nBB != sum_mag)  error(2, "(jump) magnitization isnt conserved", 2, 2*nAA+nA-nB-2*nBB, sum_mag); // check
 
 	double dt= 1.0/sum_rates;
-	if(0==sum_rates) return 0.0;
+	if(0==sum_rates) return 0;
 	else		 return 1.0/sum_rates;
 }
 

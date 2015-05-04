@@ -56,11 +56,11 @@ void class_initial::ltc_constructor(){
 void class_initial::init_states_array(int nVset, double compA){
 	// STATE 0: vacancy, 1: A atom, -1: B atom
 
-	int putV= (nx*ny*nz)/nVset;
+	int putV; if(nVset!=0) putV= (nx*ny*nz)/nVset;
 	int Vcount= 0;
 
 	for(int i=0; i<nx*ny*nz; i++){	
-		if((i%putV==0) && (Vcount<nVset)){
+		if((nVset!=0) && (i%putV==0) && (Vcount<nVset)){
 			Vcount ++;
 			*(&states[0][0][0] + i)= 0;
 		}
