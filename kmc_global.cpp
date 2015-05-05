@@ -26,10 +26,14 @@ bool itlAB[nx][ny][nz]= {false};
 FILE * his_sol;		// history file of solute atoms
 FILE * his_def;		// history file of defects
 FILE * out_engy;	// out file of energy calculations
-vector <int> actions_sol[2]; // A list contains solute atom moves from [0] to [1]
 
-vector <vcc> list_vcc;	 // A list contains information of all vacancies
-vector <itl> list_itl;   // A list contains information of all interstitials
+vector <vcc> list_vcc;	 // A list containing information of all vacancies
+vector <itl> list_itl;   // A list containing information of all interstitials
+
+vector <int> list_sink;  // atoms in the sink
+int nonconsv= 0;
+int n_noncsv= 0;
+bool is_ncsv= false;
 
 double h0;
 double c1_44, c1_43, c1_42, c1_41, c1_33, c1_32, c1_31, c1_22, c1_21, c1_11;
@@ -157,32 +161,20 @@ void write_conf(){
 }
 
 void write_hissol(){
-	vector <int> sol_from;
-	vector <int> sol_to;
+	int ncheck= 0;
 
-	for(int i=0; i<actions_sol[0].size(); i ++){	// scan all actions of solutes and put them into from and to
-		for(int j=0; j<sol_from.size(); j ++){	// see if the same solute atom moves
-			if(actions_sol[0].at(i)==sol_to.at(j)){
-				sol_to.at(j)=actions_sol[1].at(i);
-
-				if(sol_from.at(j)==sol_to.at(j)){ // delete it if from and to are the same
-					sol_from.erase(sol_from.begin()+j);
-					sol_to.erase(sol_to.begin()+j);
-				}
-				
-				goto skip_push_back;
-			} 
+	fprintf(his_sol, "%d\n", nB);
+	fprintf(his_sol, "T: %lld %e\n", timestep, totaltime);
+	for(int i=0; i<nx*ny*nz; i++){
+		if( -1== *(&states[0][0][0]+i) ){
+			ncheck ++;
+			fprintf(his_sol, "%d\n", i);
 		}
-		sol_from.push_back(actions_sol[0].at(i));
-		sol_to.push_back  (actions_sol[1].at(i));
-skip_push_back:;
 	}
 
-	fprintf(his_sol, "%lu\n", sol_from.size());
-	fprintf(his_sol, "T: %lld %e\n", timestep, totaltime);
-	for(int j=0; j<sol_from.size(); j ++)
-		fprintf(his_sol, "%d %d\n", sol_from.at(j), sol_to.at(j));
+	if(ncheck != nB) error(0, "(write_hissol) nB inconsistent", 2, ncheck, nB); // delete it
 }
+
 
 void write_hisdef(){
 	fprintf(his_def, "%lu\n", list_vcc.size()+list_itl.size());

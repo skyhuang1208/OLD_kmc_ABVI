@@ -30,6 +30,7 @@ int main(int nArg, char *Arg[]){
 		double dt= events.jump(); // Defect jumps
 		totaltime += dt;
 
+		static int n_0defect= 0;
 		int int_t0, int_t1;
 		int_t1  = (int) (totaltime/time_genr);
 		if(dt==0){
@@ -37,6 +38,7 @@ int main(int nArg, char *Arg[]){
 			totaltime= (int_t1+1) * time_genr;
 			int_t1  = (int) (totaltime/time_genr);
 			N_genr ++;
+			n_0defect ++;
 		}
 		else if(int_t1 > int_t0){ 
 			for(int i=0; i<(int_t1-int_t0); i ++){
@@ -46,34 +48,44 @@ int main(int nArg, char *Arg[]){
 		}
 		int_t0 = int_t1;
 
-
 		// OUTPUT DATA
-		if(0==timestep%step_log)
+		if(0==timestep%step_log){
 			printf("\n%lld %e %d	%d %d	%d %d %d %d ", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB);
-		if(0==timestep%step_confts){
+			if(is_ncsv){
+				cout << "*** Non-csvd v in sink: N= " << n_noncsv << " ***";
+				is_ncsv= false;
+			}
+			if(n_0defect != 0){
+				cout << " *** 0-defect genr: " << n_0defect << " ***";
+				n_0defect= 0;
+			}
+		}
+
+		int int_tconf0, int_tconf1;
+		int_tconf1= (int) (totaltime/time_conf);
+		if(0==timestep%step_conf || int_tconf1 > int_tconf0){
 			write_conf();
 			cout << "<Output conf files at: " << timestep << ">";
+			
 		}
+		int_tconf0 = int_tconf1;
+
 		if(0==timestep%step_out)
 			fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.cal_energy());
+		
 		if(0==timestep%step_his){
 			write_hisdef();
  			write_hissol();
-	
-			actions_sol[0].clear(); actions_sol[1].clear();
 		}
-		
 	}
 
 	// finalizing
-	if(timestep%step_log != 0)   
-		printf("\n%lld %f %d	%d %d	%d %d %d %d ", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB);
-	if(timestep%step_confts != 0){ 
-		write_conf(); 
-		cout << "<Output conf files at: " << timestep << ">";
-	}
-	if(timestep%step_out != 0)
-		fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.cal_energy());
+	if(timestep%step_log != 0) printf("\n%lld %f %d	%d %d	%d %d %d %d ", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB);
+	
+	write_conf(); 
+	cout << "<Output conf files at: " << timestep << ">";
+	
+	if(timestep%step_out != 0) fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.cal_energy());
 
 	int tfcpu= time(0);
 	cout << "\n**** The simulation is done! Total CPU time: " << tfcpu - t0cpu << " secs ****" << endl;

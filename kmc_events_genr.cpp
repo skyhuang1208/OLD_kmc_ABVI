@@ -44,15 +44,13 @@ void class_events::genr(){
 	// Update numbers (before)
 	switch(*(&states[0][0][0]+ltcp[0])){
 		case  1: nA --; break;
-		case -1: nB --;
-		actions_sol[0].push_back(ltcp[0]);
-		actions_sol[1].push_back(-2); // -2 meaning disapear
+		case -1: nB --; break;
+			 // sol hash?
 	}
 	switch(*(&states[0][0][0]+ltcp[1])){
 		case  1: nA --; break;
-		case -1: nB --;
-		actions_sol[0].push_back(ltcp[1]);
-		actions_sol[1].push_back(-2); // -2 meaning disapear
+		case -1: nB --; break;
+			 // sol hash?
 	}
 	
 	// Update states
@@ -68,8 +66,21 @@ void class_events::genr(){
 	}
 	nV ++;
 
+	// sink check
+	int xi= (int) (ltcp[0]/nz)/ny;
+	int xv= (int) (ltcp[1]/nz)/ny;
+	bool i_in_sink= false;
+	if(xi==x_sink){
+		sink(false, iid);
+		i_in_sink= true;
+	}
+	if(xv==x_sink)
+		sink(true, vid);
+
 	// recombination check
-	bool has_recb= recb_randomI(iid);
+	bool has_recb= false;
+	if(! i_in_sink) has_recb= recb_randomI(iid);
+
 	if	(*(&states[0][0][0]+ltcp[1]) != 0) ;	// iid recombines with vid, DO NOT CHECK RECB
 	else if	(has_recb) recb_randomV(vid-1);		// iid recombines with other vcc, erase 1 element in list_vcc, so -1
 	else 		   recb_randomV(vid);		// iid recombines with nothing, normal check for vid

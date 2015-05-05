@@ -54,9 +54,6 @@ class class_initial{
 		
 			sum_mag= 2*nAA + 1*nA -1*nB -2*nBB;
 
-			actions_sol[0].reserve((int) (0.1*step_his)); // should be much larger than need
-			actions_sol[1].reserve((int) (0.1*step_his));
-			
 			init_par();
 		}
 		

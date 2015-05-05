@@ -86,7 +86,7 @@ void class_initial::init_states_array(int nVset, double compA){
 		}
 		else if(*(&states[0][0][0]+i)== +1)	nA ++;
 		else if(*(&states[0][0][0]+i)== -1)	nB ++;
-		else				error(1, "(init_states_array) a state type is unrecognizable", 1, *(&states[0][0][0]+i));
+		else error(1, "(init_states_array) a state type is unrecognizable", 1, *(&states[0][0][0]+i));
 	}
 	if(nV != nVset) error(1, "(init_states_array) The number of vacancies is not nVset", 2, nV, nVset);
 #define TOL 0.01

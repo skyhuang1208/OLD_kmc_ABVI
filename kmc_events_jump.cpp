@@ -29,11 +29,17 @@ double class_events::jump(){
 		if( (ran >= acc_rate) && (ran < (acc_rate + rates[i]/sum_rates) ) ){
 			if(isvcc[i]){
 				actual_jumpV(ilist[i], inbrs[i]);
-				recb_randomV(ilist[i]);
+			
+				int xv= (int) (list_vcc[ilist[i]].ltcp/nz)/ny;
+				if(xv==x_sink)   sink(true, ilist[i]);
+				else           recb_randomV(ilist[i]);
 			}
 			else{
 				actual_jumpI(ilist[i], inbrs[i], jatom[i]);
-				recb_randomI(ilist[i]);
+				
+				int xi= (int) (list_itl[ilist[i]].ltcp/nz)/ny;
+				if(xi==x_sink) sink(false, ilist[i]);
+				else          recb_randomI(ilist[i]);
 			}
 			
 			break;
@@ -42,8 +48,8 @@ double class_events::jump(){
 		acc_rate += rates[i]/sum_rates;
 	}
 	
-	if(nA+nB+nV+nAA+nBB+nAB != nx*ny*nz)  error(2, "(jump) numbers of ltc points arent consistent", 2, nA+nB+nV+nAA+nBB+nAB, nx*ny*nz); // check
-	if(2*nAA+nA-nB-2*nBB != sum_mag)  error(2, "(jump) magnitization isnt conserved", 2, 2*nAA+nA-nB-2*nBB, sum_mag); // check
+	if(nA+nB+nV+nAA+nBB+nAB != nx*ny*nz)  error(2, "(jump) numbers of ltc points arent consistent, diff=", 1, nA+nB+nV+nAA+nBB+nAB-nx*ny*nz); // check
+//	if(2*nAA+nA-nB-2*nBB != sum_mag)  error(2, "(jump) magnitization isnt conserved", 2, 2*nAA+nA-nB-2*nBB, sum_mag); // dont use it since reservior
 
 	double dt= 1.0/sum_rates;
 	if(0==sum_rates) return 0;
@@ -67,10 +73,7 @@ void class_events::actual_jumpV(int vid, int nid){ // vcc id and neighbor id
 	if((y-yv)>ny/2) list_vcc[vid].iy --; if((y-yv)<-ny/2) list_vcc[vid].iy ++;
 	if((z-zv)>nz/2) list_vcc[vid].iz --; if((z-zv)<-nz/2) list_vcc[vid].iz ++;
 
-	if(states[xv][yv][zv]==-1){
-		actions_sol[0].push_back( x*ny*nz +  y*nz +  z);
-		actions_sol[1].push_back(xv*ny*nz + yv*nz + zv);
-	}
+	// sol hash?
 }
 
 void class_events::actual_jumpI(int iid, int nid, int jatom){ // itl id, neighbor id, and the jumping atom
@@ -92,9 +95,8 @@ void class_events::actual_jumpI(int iid, int nid, int jatom){ // itl id, neighbo
 		case  1: nA --; 
 			 break;
 		case -1: nB --;
-			 actions_sol[0].push_back(x*ny*nz + y*nz + z);
-			 actions_sol[1].push_back(-2); // -2 meaning disapear
 			 break;
+			 // sol hash?
 		default: error(2, "(jump) could not find the Atom type in --", 1, states[x][y][z]);
 	}
 	
@@ -109,10 +111,8 @@ void class_events::actual_jumpI(int iid, int nid, int jatom){ // itl id, neighbo
 	}
 	switch(states[xi][yi][zi]){
 		case  1: nA ++; break;
-		case -1: nB ++;
-			 actions_sol[0].push_back(-1); // -1 meaning appear out of void
-			 actions_sol[1].push_back(xi*ny*nz + yi*nz + zi);
-			 break;
+		case -1: nB ++; break;
+			 // sol hash?
 		default: error(2, "(jump) could not find the Atom type in ++", 1, states[xi][yi][zi]);
 	}
 	

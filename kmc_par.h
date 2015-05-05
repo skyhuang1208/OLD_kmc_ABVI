@@ -10,14 +10,14 @@ const int    par_nz=                       64;
 const double par_compA=                  0.95; // composition of A atoms
 const int    par_nV=                        0;
 
-const double	    par_time=            1e04; 	// toal time (s)
+const double	    par_time=            1e05; 	// toal time (s)
 const long long int par_step=            2e10; 	// toal timestep (give a minus step to ignore this quiterior to end the simulation)
 
 const long long int step_log=	          5e4; 
-const long long int step_confts= par_step/5e0;	// timestep that output a conf file for restart later
+const long long int step_conf=   par_step/5e0;	// timestep that output a conf file for restart later
+const long long int time_conf=   par_time/5e0;	//     time that output a conf file for restart later
 const long long int step_out=	 par_step/5e2; 
-const long long int step_his=		  1e4;
-
+const long long int step_his=		  1e5;
 
 const bool par_isrestart=		    false;
 

@@ -21,6 +21,7 @@ extern double vbra[3][3];	// coordinate vectors of bravice lattice
 const int nx=  par_nx;
 const int ny=  par_ny;
 const int nz=  par_nz;
+const int x_sink= (int) (nx/2);
 extern int nA, nB, nV, nAA, nBB, nAB;
 extern int sum_mag; // sum of magnitization; should be conserved
 extern int states[nx][ny][nz];
@@ -30,9 +31,6 @@ extern bool itlAB[nx][ny][nz];
 extern FILE * his_sol;		// history file of solute atoms
 extern FILE * his_def;		// history file of vacancies and interstitials: record every several steps
 extern FILE * out_engy;		// out file for energy calculations
-
-// Solute information for his_sol
-extern vector <int> actions_sol[2]; // A list contains solute atom moves from [0] to [1]
 
 // Parameters for mechanisms
 const double dis_rec= par_dis_rec;	// recombination distance
@@ -51,6 +49,11 @@ struct itl{ // information of an interstitial; can declare a vector to store all
 };
 extern vector <vcc> list_vcc;	// A list contains information of all vacancies
 extern vector <itl> list_itl;  	// A list contains information of all interstitials
+
+extern vector <int> list_sink;  // atoms in the sink
+extern int nonconsv; // non-conseve magnitization
+extern int n_noncsv; // number of vacancies fall into sink before list_sink has value
+extern bool is_ncsv; // a flag indicating whether an non-conserved V fallen into sink
 
 // Migration parameters
 const double temp= par_temp; 

@@ -14,8 +14,8 @@ class class_events{
 			double nnd= sqrt(vbra[0][0]*vbra[0][0]+vbra[0][1]*vbra[0][1]+vbra[0][2]*vbra[0][2]);
 			rrecb_nnd= (int) (dis_rec/nnd);
 
-			cout << "recombination parameters: " << endl;
-			cout << "recombination distance: " << dis_rec << ", (int) " << rrecb_int << ", (in nearest-neighbor distance) " << rrecb_nnd << endl;
+			cout << "##Generation parameters: (dpa/s) " << 1.0/time_genr/nx/ny/nz << ", (time period)" << time_genr << endl;
+			cout << "##Recombination parameters: (distance) " << dis_rec << ", (int) " << rrecb_int << ", (in nearest-neighbor distance) " << rrecb_nnd << endl;
 		}
 		
 		// functions
@@ -46,6 +46,7 @@ class class_events{
 		bool cal_dis(int d1, int d2, int d3);
 		void recb_randomV(int index);
 		bool recb_randomI(int index);
+		void sink(bool isvcc, int index);
 };
 
 #endif // KMC_EVENTS_INCLUDED

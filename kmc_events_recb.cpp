@@ -3,6 +3,7 @@
 #include <vector>
 #include "kmc_global.h"
 #include "kmc_events.h"
+#include "kmc_par.h"
 
 using namespace std;
 
@@ -35,15 +36,8 @@ void class_events::rules_recb(int ii, int iv){ // execute the recombination
 	*(&states[0][0][0]+iltcp) -=ja;
 	*(&states[0][0][0]+vltcp) +=ja;
 	
-	if(-1==*(&states[0][0][0]+iltcp)){
-		actions_sol[0].push_back(-1); // -1 meaning appear out of void
-		actions_sol[1].push_back(iltcp);
-	}
-	if(-1==*(&states[0][0][0]+vltcp)){
-		actions_sol[0].push_back(-1); // -1 meaning appear out of void
-		actions_sol[1].push_back(vltcp);
-	}
-	
+	// sol hash?
+
 	list_itl.erase(list_itl.begin()+ii);
 	list_vcc.erase(list_vcc.begin()+iv);
 }
@@ -144,4 +138,65 @@ bool class_events::recb_randomI(int index){
 	else return false;
 }
 
+void class_events::sink(bool isvcc, int index){ // execute the sink
+	int ltcp;
+	
+	if(isvcc){
+		nV --;
+		ltcp= list_vcc[index].ltcp;
+		list_vcc.erase(list_vcc.begin()+index);
 
+		if(list_sink.size() != 0){
+			int isink= (int) (ran_generator()*list_sink.size());
+			*(&states[0][0][0]+ltcp)= list_sink[isink];
+			list_sink.erase(list_sink.begin()+isink);
+		}
+		else{
+			if(ran_generator() < par_compA) *(&states[0][0][0]+ltcp)= 1;
+			else				*(&states[0][0][0]+ltcp)=-1;
+			nonconsv += *(&states[0][0][0]+ltcp);
+			n_noncsv ++;
+			is_ncsv= true;
+		}
+
+		if(1==*(&states[0][0][0]+ltcp)) nA ++;
+		else				nB ++;
+	}
+	else{
+		ltcp= list_itl[index].ltcp;
+		list_itl.erase(list_itl.begin()+index);
+		
+		double ran;
+		switch(*(&states[0][0][0]+ltcp)){
+			case  2:
+				nAA --;
+				list_sink.push_back(1);
+				*(&states[0][0][0]+ltcp)= 1; nA ++;
+				break;
+			case  0:
+				nAB --;
+				ran= ran_generator();
+				if(ran>0.5){
+					list_sink.push_back(-1);
+					*(&states[0][0][0]+ltcp)= 1; nA ++;
+				}
+				else{
+					list_sink.push_back(1);
+					*(&states[0][0][0]+ltcp)= -1; nB ++;
+					// sol hash?
+				}
+				break;
+			case -2:
+				nBB --;
+				list_sink.push_back(-1);
+				*(&states[0][0][0]+ltcp)= -1; nB ++;
+				break;
+				// sol hash?
+			default: error(2, "(sink) an unknown type", 1, *(&states[0][0][0]+ltcp));
+		}
+	}
+	
+	int msum= 2*nAA+nA-nB-2*nBB;
+	for(int i= 0; i<list_sink.size(); i++) msum += list_sink[i];
+	if(msum+nonconsv != sum_mag)  error(2, "(sink) magnitization isnt conserved", 2, msum+nonconsv, sum_mag); // check
+}
