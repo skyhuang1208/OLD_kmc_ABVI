@@ -26,8 +26,11 @@ double class_events::jump(){
 	double acc_rate= 0; // accumulated rate
 
 	for(int i=0; i<rates.size(); i ++){
-		if( (ran >= acc_rate) && (ran < (acc_rate + rates[i]/sum_rates) ) ){
+		if( (ran >= acc_rate) && (ran < (acc_rate + rates[i]/sum_rates) ) ){			
 			if(isvcc[i]){
+				if(jatom[i]==1) Vja[0] ++;
+				else		Vja[1] ++;
+
 				actual_jumpV(ilist[i], inbrs[i]);
 			
 				int xv= (int) (list_vcc[ilist[i]].ltcp/nz)/ny;
@@ -35,6 +38,9 @@ double class_events::jump(){
 				else           recb_randomV(ilist[i]);
 			}
 			else{
+				if(jatom[i]==1) Ija[0] ++;
+				else		Ija[1] ++;
+
 				actual_jumpI(ilist[i], inbrs[i], jatom[i]);
 				
 				int xi= (int) (list_itl[ilist[i]].ltcp/nz)/ny;

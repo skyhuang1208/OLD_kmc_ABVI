@@ -43,7 +43,7 @@ double class_events::cal_ratesV(vector <bool> &isvcc, vector <double> &rates, ve
 				isvcc.push_back(true);
 				ilist.push_back(ivcc);
 				inbrs.push_back(a);
-				jatom.push_back(0);
+				jatom.push_back(states[x][y][z]);
 				
 				sum_rate += rates.back();
 			}

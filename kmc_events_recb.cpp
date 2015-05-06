@@ -198,5 +198,5 @@ void class_events::sink(bool isvcc, int index){ // execute the sink
 	
 	int msum= 2*nAA+nA-nB-2*nBB;
 	for(int i= 0; i<list_sink.size(); i++) msum += list_sink[i];
-	if(msum+nonconsv != sum_mag)  error(2, "(sink) magnitization isnt conserved", 2, msum+nonconsv, sum_mag); // check
+	if(msum-nonconsv != sum_mag) error(2, "(sink) magnitization isnt conserved", 2, msum-nonconsv, sum_mag); // check
 }

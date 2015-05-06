@@ -30,6 +30,9 @@ FILE * out_engy;	// out file of energy calculations
 vector <vcc> list_vcc;	 // A list containing information of all vacancies
 vector <itl> list_itl;   // A list containing information of all interstitials
 
+long long int Vja[2]= {0};
+long long int Ija[2]= {0};
+
 vector <int> list_sink;  // atoms in the sink
 int nonconsv= 0;
 int n_noncsv= 0;

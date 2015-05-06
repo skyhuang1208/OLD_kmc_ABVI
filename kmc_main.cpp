@@ -22,7 +22,7 @@ int main(int nArg, char *Arg[]){
 	cout << "\n########## The Simulation Begins !! ##########" << endl;
 	timestep=  ts_bg; totaltime= time_bg;
 	int N_genr= 0;
-	cout << "TIMESTEP() TIME(s) GENR()	NA() NB()	NV() NAA() NAB() NBB()";
+	cout << "TIMESTEP() TIME(s) GENR()	NA() NB()	NV() NAA() NAB() NBB()	AJUMP_V% AJUMP_I%";
 	while((totaltime<= time_bg+par_time) && (timestep != ts_bg+par_step)){
 		timestep ++;
 		
@@ -50,13 +50,15 @@ int main(int nArg, char *Arg[]){
 
 		// OUTPUT DATA
 		if(0==timestep%step_log){
-			printf("\n%lld %e %d	%d %d	%d %d %d %d ", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB);
+			printf("\n%lld %e %d     %d %d     %d %d %d %d     %f %f", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB, 
+										   ((double) Vja[0])/(Vja[0]+Vja[1]), ((double) Ija[0])/(Ija[0]+Ija[1]));
+			
 			if(is_ncsv){
-				cout << "*** Non-csvd v in sink: N= " << n_noncsv << " ***";
+				cout << "  *** Non-csvd v in sink: N= " << n_noncsv << " *** ";
 				is_ncsv= false;
 			}
 			if(n_0defect != 0){
-				cout << " *** 0-defect genr: " << n_0defect << " ***";
+				cout << "  *** 0-defect genr: " << n_0defect << " ***";
 				n_0defect= 0;
 			}
 		}

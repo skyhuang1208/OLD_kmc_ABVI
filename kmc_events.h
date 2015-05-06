@@ -32,6 +32,7 @@ class class_events{
 		////// functions of energy calculation //////
 		double cal_energy(int x1, int y1, int z1, int x2, int y2, int z2); 
 		int powc(int base, int index);
+		double ecal_bond(bool itl, int x1, int y1, int z1, int x2, int y2, int z2); 
 
 		////// functions for jumps(jumping rate calculations) //////
 		double cal_ratesV(vector <bool> &isvcc, vector <double> &rates, vector <int> &ilist, vector <int> &inbrs, vector <int> &jatom);

@@ -50,6 +50,8 @@ struct itl{ // information of an interstitial; can declare a vector to store all
 extern vector <vcc> list_vcc;	// A list contains information of all vacancies
 extern vector <itl> list_itl;  	// A list contains information of all interstitials
 
+extern long long int Vja[2], Ija[2];
+
 extern vector <int> list_sink;  // atoms in the sink
 extern int nonconsv; // non-conseve magnitization
 extern int n_noncsv; // number of vacancies fall into sink before list_sink has value
