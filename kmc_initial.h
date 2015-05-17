@@ -55,6 +55,7 @@ class class_initial{
 			sum_mag= 2*nAA + 1*nA -1*nB -2*nBB;
 
 			init_par();
+			init_uncorrH();
 		}
 		
 	private:
@@ -65,5 +66,6 @@ class class_initial{
 		void init_states_array(int nVset, double compA);
 		void read_restart(char name_restart[], long long int &ts_initial, double &time_initial);
 		void init_par();
+		void init_uncorrH();
 };
 #endif // KMC_SYSTEM_INCLUDED

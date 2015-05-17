@@ -39,8 +39,12 @@ int n_noncsv= 0;
 bool is_ncsv= false;
 
 double h0;
-double c1_44, c1_43, c1_42, c1_41, c1_33, c1_32, c1_31, c1_22, c1_21, c1_11;
-double c2_44, c2_43, c2_42, c2_41, c2_33, c2_32, c2_31, c2_22, c2_21, c2_11;
+double c1_44, c1_43, c1_42, c1_41, c1_33, c1_32, c1_31, c1_22, c1_21, c1_11, c1_40, c1_30, c1_20, c1_10, c1_00;
+double c1_00_ABA, c1_00_ABB, c1_00_A, c1_00_B, c1_00_V, c1_00_AA, c1_00_AB, c1_00_BB, c1_00_0;
+double c2_44, c2_43, c2_42, c2_41, c2_33, c2_32, c2_31, c2_22, c2_21, c2_11, c2_40, c2_30, c2_20, c2_10, c2_00;
+double c2_00_ABA, c2_00_ABB, c2_00_A, c2_00_B, c2_00_V, c2_00_AA, c2_00_AB, c2_00_BB, c2_00_0;
+double unc1_44, unc1_43, unc1_42, unc1_41, unc1_33, unc1_32, unc1_31, unc1_22, unc1_21, unc1_11, unc1_40, unc1_30, unc1_20, unc1_10, unc1_00;
+double unc2_44, unc2_43, unc2_42, unc2_41, unc2_33, unc2_32, unc2_31, unc2_22, unc2_21, unc2_11, unc2_40, unc2_30, unc2_20, unc2_10, unc2_00;
 bool is_e2nbr;
 
 ////////// GLOBAL FUNCTIONS //////////

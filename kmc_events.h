@@ -21,7 +21,7 @@ class class_events{
 		// functions
 		void genr();
 		double jump();
-		double cal_energy();
+		double ecal_whole() const; 
 	
 	private:
 		// Variables for recombination check
@@ -30,9 +30,11 @@ class class_events{
 		int rrecb_nnd;	// recombination distance in nearest neighbor distance
 
 		////// functions of energy calculation //////
-		double cal_energy(int x1, int y1, int z1, int x2, int y2, int z2); 
-		int powc(int base, int index);
-		double ecal_bond(bool itl, int x1, int y1, int z1, int x2, int y2, int z2); 
+		double cal_energy(bool is_itl, int x1, int y1, int z1, int x2, int y2, int z2) const; 
+		int powc(int base, int index) const;
+		double cal_c00(int type[], int ABA1, int ABB1, int ABA2, int ABB2) const;
+		double ecal_bond(bool is_itl, int x1, int y1, int z1, int x2, int y2, int z2) const; 
+		double ecal_otf (bool is_itl, int x1, int y1, int z1, int x2, int y2, int z2) const; // corrected H on the fly 
 
 		////// functions for jumps(jumping rate calculations) //////
 		double cal_ratesV(vector <bool> &isvcc, vector <double> &rates, vector <int> &ilist, vector <int> &inbrs, vector <int> &jatom);

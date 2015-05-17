@@ -46,6 +46,7 @@ double class_events::jump(){
 				int xi= (int) (list_itl[ilist[i]].ltcp/nz)/ny;
 				if(xi==x_sink) sink(false, ilist[i]);
 				else          recb_randomI(ilist[i]);
+			
 			}
 			
 			break;
@@ -105,7 +106,7 @@ void class_events::actual_jumpI(int iid, int nid, int jatom){ // itl id, neighbo
 			 // sol hash?
 		default: error(2, "(jump) could not find the Atom type in --", 1, states[x][y][z]);
 	}
-	
+
 	states[xi][yi][zi] -= jatom; // jumping
 	states[x][y][z]    += jatom;
 	

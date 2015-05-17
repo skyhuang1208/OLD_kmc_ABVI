@@ -45,13 +45,11 @@ double class_events::cal_ratesI(vector <bool> &isvcc, vector <double> &rates, ve
 				}
 
 				// calculate energy diff
-				double e0= cal_energy(i, j, k, x, y, z);
+				double e0= cal_energy(true, i, j, k, x, y, z);
 
 				itl_rules(states[i][j][k], states[x][y][z], ja); // perform an imaginary jump
-				if(stateI==states[i][j][k]) error(2, "imaginary jump error"); // delete it 
-				//(check if direct using states +/- jatom is faster than the itl_rules function)
 
-				double ediff= cal_energy(i, j, k, x, y, z) - e0;
+				double ediff= cal_energy(true, i, j, k, x, y, z) - e0;
 				
 				states[i][j][k]= stateI; //transit back
 				states[x][y][z]= stateA;

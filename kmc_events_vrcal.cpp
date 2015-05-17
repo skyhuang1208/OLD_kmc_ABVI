@@ -28,13 +28,13 @@ double class_events::cal_ratesV(vector <bool> &isvcc, vector <double> &rates, ve
 				else if(states[x][y][z]==-1) { em= emvB; mu= muB;} 
 				else error(2, "(cal_ratesV) wrong type for V to jump into", 1, states[x][y][z]);
 
-				double e0= cal_energy(i, j, k, x, y, z);
+				double e0= cal_energy(false, i, j, k, x, y, z);
 
 				states[i][j][k]= states[x][y][z];
 				states[x][y][z]= 0;
 
-				double ediff= cal_energy(i, j, k, x, y, z) - e0;
-				
+				double ediff= cal_energy(false, i, j, k, x, y, z) - e0;
+
 				states[x][y][z]= states[i][j][k];
 				states[i][j][k]= 0;
 				

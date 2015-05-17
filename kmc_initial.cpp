@@ -172,27 +172,27 @@ void class_initial::read_restart(char name_restart[], long long int &ts_initial,
 
 void class_initial::init_par(){
 	// 1st-nn class 1
-	c1_44= ( (eAA1AA -8*eAA1A -8*eAA1B +12*eAA1AB +2*eAA1BB +12*eAB1BB -8*eA1BB -8*eB1BB +eBB1BB) +
-	       (48*eA1AB -12*eAB1AB +48*eAB1B) + (-48*eA1V +48*eV1V -48*eV1B) + (16*eA1A +32*eA1B +16*eB1B) )/576; 
+	c1_44= ( (eAA1AA -8*eAA1A -8*eAA1B +12*eAA1AB +2*eAA1BB +12*eAB1BB -8*eA1BB -8*eB1BB +eBB1BB)
+	       -12*eAB1AB + (-48*eA1V +48*eV1V -48*eV1B) + (16*eA1A +32*eA1B +16*eB1B) )/576; 
 	 
-	c1_42= ( (-eAA1AA +20*eAA1A +20*eAA1B -36*eAA1AB -2*eAA1BB -36*eAB1BB +20*eA1BB +20*eB1BB -eBB1BB) +
-	       (-216*eA1AB +36*eAB1AB -216*eAB1B) + (216*eA1V -216*eV1V +216*eV1B) + (-64*eA1A -128*eA1B -64*eB1B) )/576; 
+	c1_42= ( (-eAA1AA +20*eAA1A +20*eAA1B -36*eAA1AB -2*eAA1BB -36*eAB1BB +20*eA1BB +20*eB1BB -eBB1BB)
+	       +36*eAB1AB + (216*eA1V -216*eV1V +216*eV1B) + (-64*eA1A -128*eA1B -64*eB1B) )/576; 
 
-	c1_22= ( (eAA1AA -32*eAA1A -32*eAA1B +60*eAA1AB +2*eAA1BB +60*eAB1BB -32*eA1BB -32*eB1BB +eBB1BB) +
-	       (960*eA1AB -60*eAB1AB +960*eAB1B) + (-960*eA1V +960*eV1V -960*eV1B) + (256*eA1A +512*eA1B +256*eB1B) )/576; 
+	c1_22= ( (eAA1AA -32*eAA1A -32*eAA1B +60*eAA1AB +2*eAA1BB +60*eAB1BB -32*eA1BB -32*eB1BB +eBB1BB)
+	       -60*eAB1AB + (-960*eA1V +960*eV1V -960*eV1B) + (256*eA1A +512*eA1B +256*eB1B) )/576; 
 	
 	// 1st-nn class 2
 	c1_43= ( (eAA1AA -6*eAA1A -2*eAA1B +6*eAA1AB -6*eAB1BB +2*eA1BB +6*eB1BB -eBB1BB) +
-	       (12*eA1AB -12*eAB1B) + (-12*eA1V +12*eV1B) + (8*eA1A -8*eB1B) )/288; 
+	       (-12*eA1V +12*eV1B) + (8*eA1A -8*eB1B) )/288; 
 	 
 	c1_41= ( (-eAA1AA +12*eAA1A -4*eAA1B -6*eAA1AB +6*eAB1BB +4*eA1BB -12*eB1BB +eBB1BB) +
-	       (-48*eA1AB +48*eAB1B) + (48*eA1V -48*eV1B) + (-32*eA1A +32*eB1B) )/288; 
+	       (48*eA1V -48*eV1B) + (-32*eA1A +32*eB1B) )/288; 
 	
 	c1_32= ( (-eAA1AA +18*eAA1A +14*eAA1B -30*eAA1AB +30*eAB1BB -14*eA1BB -18*eB1BB +eBB1BB) +
-	       (-60*eA1AB +60*eAB1B) + (60*eA1V -60*eV1B) + (-32*eA1A +32*eB1B) )/288; 
+	       (60*eA1V -60*eV1B) + (-32*eA1A +32*eB1B) )/288; 
 	
 	c1_21= ( (eAA1AA -24*eAA1A -8*eAA1B +30*eAA1AB -30*eAB1BB +8*eA1BB +24*eB1BB -eBB1BB) +
-	       (240*eA1AB -240*eAB1B) + (-240*eA1V +240*eV1B) + (128*eA1A -128*eB1B) )/288; 
+	       (-240*eA1V +240*eV1B) + (128*eA1A -128*eB1B) )/288; 
 	
 	// 1st-nn class 3
 	c1_33= ( (eAA1AA -4*eAA1A +4*eAA1B -2*eAA1BB +4*eA1BB -4*eB1BB +eBB1BB) +
@@ -205,27 +205,27 @@ void class_initial::init_par(){
 	       (64*eA1A -128*eA1B +64*eB1B) )/144; 
 	
 	// 2nd-nn class 1
-	c2_44= ( (eAA2AA -8*eAA2A -8*eAA2B +12*eAA2AB +2*eAA2BB +12*eAB2BB -8*eA2BB -8*eB2BB +eBB2BB) +
-	       (48*eA2AB -12*eAB2AB +48*eAB2B) + (-48*eA2V +48*eV2V -48*eV2B) + (16*eA2A +32*eA2B +16*eB2B) )/576; 
+	c2_44= ( (eAA2AA -8*eAA2A -8*eAA2B +12*eAA2AB +2*eAA2BB +12*eAB2BB -8*eA2BB -8*eB2BB +eBB2BB)
+	       -12*eAB2AB + (-48*eA2V +48*eV2V -48*eV2B) + (16*eA2A +32*eA2B +16*eB2B) )/576; 
 	 
-	c2_42= ( (-eAA2AA +20*eAA2A +20*eAA2B -36*eAA2AB -2*eAA2BB -36*eAB2BB +20*eA2BB +20*eB2BB -eBB2BB) +
-	       (-216*eA2AB +36*eAB2AB -216*eAB2B) + (216*eA2V -216*eV2V +216*eV2B) + (-64*eA2A -128*eA2B -64*eB2B) )/576; 
+	c2_42= ( (-eAA2AA +20*eAA2A +20*eAA2B -36*eAA2AB -2*eAA2BB -36*eAB2BB +20*eA2BB +20*eB2BB -eBB2BB)
+	       +36*eAB2AB + (216*eA2V -216*eV2V +216*eV2B) + (-64*eA2A -128*eA2B -64*eB2B) )/576; 
 
-	c2_22= ( (eAA2AA -32*eAA2A -32*eAA2B +60*eAA2AB +2*eAA2BB +60*eAB2BB -32*eA2BB -32*eB2BB +eBB2BB) +
-	       (960*eA2AB -60*eAB2AB +960*eAB2B) + (-960*eA2V +960*eV2V -960*eV2B) + (256*eA2A +512*eA2B +256*eB2B) )/576; 
+	c2_22= ( (eAA2AA -32*eAA2A -32*eAA2B +60*eAA2AB +2*eAA2BB +60*eAB2BB -32*eA2BB -32*eB2BB +eBB2BB)
+	       -60*eAB2AB + (-960*eA2V +960*eV2V -960*eV2B) + (256*eA2A +512*eA2B +256*eB2B) )/576; 
 	
 	// 2nd-nn class 2
 	c2_43= ( (eAA2AA -6*eAA2A -2*eAA2B +6*eAA2AB -6*eAB2BB +2*eA2BB +6*eB2BB -eBB2BB) +
-	       (12*eA2AB -12*eAB2B) + (-12*eA2V +12*eV2B) + (8*eA2A -8*eB2B) )/288; 
+	       (-12*eA2V +12*eV2B) + (8*eA2A -8*eB2B) )/288; 
 	 
 	c2_41= ( (-eAA2AA +12*eAA2A -4*eAA2B -6*eAA2AB +6*eAB2BB +4*eA2BB -12*eB2BB +eBB2BB) +
-	       (-48*eA2AB +48*eAB2B) + (48*eA2V -48*eV2B) + (-32*eA2A +32*eB2B) )/288; 
+	       (48*eA2V -48*eV2B) + (-32*eA2A +32*eB2B) )/288; 
 	
 	c2_32= ( (-eAA2AA +18*eAA2A +14*eAA2B -30*eAA2AB +30*eAB2BB -14*eA2BB -18*eB2BB +eBB2BB) +
-	       (-60*eA2AB +60*eAB2B) + (60*eA2V -60*eV2B) + (-32*eA2A +32*eB2B) )/288; 
+	       (60*eA2V -60*eV2B) + (-32*eA2A +32*eB2B) )/288; 
 	
 	c2_21= ( (eAA2AA -24*eAA2A -8*eAA2B +30*eAA2AB -30*eAB2BB +8*eA2BB +24*eB2BB -eBB2BB) +
-	       (240*eA2AB -240*eAB2B) + (-240*eA2V +240*eV2B) + (128*eA2A -128*eB2B) )/288; 
+	       (-240*eA2V +240*eV2B) + (128*eA2A -128*eB2B) )/288; 
 	
 	// 2nd-nn class 3
 	c2_33= ( (eAA2AA -4*eAA2A +4*eAA2B -2*eAA2BB +4*eA2BB -4*eB2BB +eBB2BB) +
@@ -236,6 +236,40 @@ void class_initial::init_par(){
 	
 	c2_11= ( (eAA2AA -16*eAA2A +16*eAA2B -2*eAA2BB +16*eA2BB -16*eB2BB +eBB2BB) +
 	       (64*eA2A -128*eA2B +64*eB2B) )/144; 
+
+	// 1st-nn constants (for itl jump only)
+	c1_40= ( ( eAA1AB +eAB1BB) + (-4*eA1AB  +6*eAB1AB  -4*eAB1B) + (-4*eA1V  +6*eV1V  -4*eV1B) )/24; 
+	c1_30= ( ( eAA1AB -eAB1BB) + (-2*eA1AB             +2*eAB1B) + (-2*eA1V           +2*eV1B) )/12; 
+	c1_20= ( (-eAA1AB -eAB1BB) + (16*eA1AB -30*eAB1AB +16*eAB1B) + (16*eA1V -30*eV1V +16*eV1B) )/24; 
+	c1_10= ( (-eAA1AB +eAB1BB) + ( 8*eA1AB             -8*eAB1B) + ( 8*eA1V           -8*eV1B) )/12; 
+	
+	// 2nd-nn constants (for itl jump only)
+	c2_40= ( ( eAA2AB +eAB2BB) + (-4*eA2AB  +6*eAB2AB  -4*eAB2B) + (-4*eA2V  +6*eV2V  -4*eV2B) )/24; 
+	c2_30= ( ( eAA2AB -eAB2BB) + (-2*eA2AB             +2*eAB2B) + (-2*eA2V           +2*eV2B) )/12; 
+	c2_20= ( (-eAA2AB -eAB2BB) + (16*eA2AB -30*eAB2AB +16*eAB2B) + (16*eA2V -30*eV2V +16*eV2B) )/24; 
+	c2_10= ( (-eAA2AB +eAB2BB) + ( 8*eA2AB             -8*eAB2B) + ( 8*eA2V           -8*eV2B) )/12; 
+
+	// 1st-nn C00 (for itl jump only) (C00 are calculated on the fly(change with time))
+	c1_00_ABA= eA1AB -eA1V -0.5*eAB1AB + 0.5*eV1V;
+	c1_00_ABB= eAB1B -eV1B -0.5*eAB1AB + 0.5*eV1V;
+	c1_00_A = n1nbr*(-eA1AB +0.5*eAB1AB);
+	c1_00_B = n1nbr*(-eAB1B +0.5*eAB1AB);
+	c1_00_V = n1nbr*(-0.5*eAB1AB);
+	c1_00_AA= n1nbr*( 0.5*eV1V);
+	c1_00_AB= n1nbr*(-0.5*eV1V);
+	c1_00_BB= n1nbr*( 0.5*eV1V);
+	c1_00_0 = eAB1AB +eV1V;
+
+	// 2nd-nn C00 (for itl jump only) (C00 are calculated on the fly(change with time))
+	c2_00_ABA= eA2AB -eA2V -0.5*eAB2AB + 0.5*eV2V;
+	c2_00_ABB= eAB2B -eV2B -0.5*eAB2AB + 0.5*eV2V;
+	c2_00_A = n2nbr*(-eA2AB +0.5*eAB2AB);
+	c2_00_B = n2nbr*(-eAB2B +0.5*eAB2AB);
+	c2_00_V = n2nbr*(-0.5*eAB2AB);
+	c2_00_AA= n2nbr*( 0.5*eV2V);
+	c2_00_AB= n2nbr*(-0.5*eV2V);
+	c2_00_BB= n2nbr*( 0.5*eV2V);
+	c2_00_0 = eAB2AB +eV2V;
 
 	if(0==c2_44 && 0==c2_43 && 0==c2_42 && 0==c2_41 && 0==c2_33 && 0==c2_32 && 0==c2_31 && 0==c2_22 && 0==c2_21 && 0==c2_11) is_e2nbr= false;
 	else is_e2nbr= true;
@@ -249,31 +283,35 @@ void class_initial::init_par(){
 	printf("Interstitial Em= %f %f\n", emiA, emiB);
 	printf("Rotation Er(AA, AB, BB)= %f %f %f\n", erAA, erAB, erBB);
 	
-	cout << "Input epsilons:" << endl;
+	cout << "\n##### Input epsilons: #####" << endl;
 	cout << "(1st neigbor)" << endl;
-	printf("AA-AA: %f, AA-A: %f, AA-V: %f, AA-AB: %f, AA-B: %f, AA-BB: %f\n", eAA1AA, eAA1A, eAA1V, eAA1AB, eAA1B, eAA1BB);
+	printf("AA-AA: %f, AA-A: %f, AA-AB: %f, AA-B: %f, AA-BB: %f\n", eAA1AA, eAA1A, eAA1AB, eAA1B, eAA1BB);
 	printf("A-A:   %f, A-V:  %f, A-AB: %f, A-B:   %f, A-BB: %f\n", eA1A, eA1V, eA1AB, eA1B, eA1BB);
-	printf("V-V:   %f, V-AB: %f, V-B:  %f, V-BB:  %f\n", eV1V, eV1AB, eV1B, eV1BB);
+	printf("V-V:   %f, V-B:  %f\n", eV1V, eV1B);
 	printf("AB-AB: %f, AB-B: %f, AB-BB: %f\n", eAB1AB, eAB1B, eAB1BB);
 	printf("B-B:   %f, B-BB: %f\n", eB1B, eB1BB);
 	printf("BB-BB: %f\n", eBB1BB);
 	cout << "(2nd neigbor)" << endl;
-	printf("AA-AA: %f, AA-A: %f, AA-V: %f, AA-AB: %f, AA-B: %f, AA-BB: %f\n", eAA2AA, eAA2A, eAA2V, eAA2AB, eAA2B, eAA2BB);
+	printf("AA-AA: %f, AA-A: %f, AA-AB: %f, AA-B: %f, AA-BB: %f\n", eAA2AA, eAA2A, eAA2AB, eAA2B, eAA2BB);
 	printf("A-A:   %f, A-V:  %f, A-AB: %f, A-B:   %f, A-BB: %f\n", eA2A, eA2V, eA2AB, eA2B, eA2BB);
-	printf("V-V:   %f, V-AB: %f, V-B:  %f, V-BB:  %f\n", eV2V, eV2AB, eV2B, eV2BB);
+	printf("V-V:   %f, V-B:  %f\n", eV2V, eV2B);
 	printf("AB-AB: %f, AB-B: %f, AB-BB: %f\n", eAB2AB, eAB2B, eAB2BB);
 	printf("B-B:   %f, B-BB: %f\n", eB2B, eB2BB);
 	printf("BB-BB: %f\n", eBB2BB);
 	
-	cout << "Ising formulation constants:" << endl;
+	cout << "\n##### Ising formulation constants: #####" << endl;
 	cout << "(1st neighbor)" << endl;
 	printf("Class 1\nC44: %f, C42: %f, C22: %f\n", c1_44, c1_42, c1_22);
 	printf("Class 2\nC43: %f, C41: %f, C32: %f, C21: %f\n", c1_43, c1_41, c1_32, c1_21);
 	printf("Class 3\nC33: %f, C31: %f, C11: %f\n", c1_33, c1_31, c1_11);
+	printf("Class 0\nC40: %f, C30: %f, C20: %f, C10: %f\n", c1_40, c1_30, c1_20, c1_10);
+	printf("C00_ABA: %f, C00_ABB: %f, C00_AA: %f, C00_A: %f, C00_AB: %f, C00_B: %f, C00_BB: %f, C00_0: %f\n", c1_00_ABA, c1_00_ABB, c1_00_AA, c1_00_A, c1_00_AB, c1_00_B, c1_00_BB, c1_00_0);
 	cout << "(2nd neighbor)" << endl;
 	printf("Class 1\nC44: %f, C42: %f, C22: %f\n", c2_44, c2_42, c2_22);
 	printf("Class 2\nC43: %f, C41: %f, C32: %f, C21: %f\n", c2_43, c2_41, c2_32, c2_21);
 	printf("Class 3\nC33: %f, C31: %f, C11: %f\n", c2_33, c2_31, c2_11);
+	printf("Class 0\nC40: %f, C30: %f, C20: %f, C10: %f\n", c2_40, c2_30, c2_20, c2_10);
+	printf("C00_ABA: %f, C00_ABB: %f, C00_AA: %f, C00_A: %f, C00_AB: %f, C00_B: %f, C00_BB: %f, C00_0: %f\n", c2_00_ABA, c2_00_ABB, c2_00_AA, c2_00_A, c2_00_AB, c2_00_B, c2_00_BB, c2_00_0);
 
 	if(is_e2nbr) 	cout << "\n2nd nn parameters are non-zero" << endl;
 	else		cout << "\n2nd nn are 0, skip 2nd-nn calculations" << endl;

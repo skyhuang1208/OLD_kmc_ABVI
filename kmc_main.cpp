@@ -23,6 +23,7 @@ int main(int nArg, char *Arg[]){
 	timestep=  ts_bg; totaltime= time_bg;
 	int N_genr= 0;
 	cout << "TIMESTEP() TIME(s) GENR()	NA() NB()	NV() NAA() NAB() NBB()	AJUMP_V% AJUMP_I%";
+	printf("\n%d %e %d     %d %d     %d %d %d %d     %f %f", 0, 0.0, 0, nA, nB, nV, nAA, nAB, nBB, 0.0, 0.0);
 	while((totaltime<= time_bg+par_time) && (timestep != ts_bg+par_step)){
 		timestep ++;
 		
@@ -66,14 +67,12 @@ int main(int nArg, char *Arg[]){
 		int int_tconf0, int_tconf1;
 		int_tconf1= (int) (totaltime/time_conf);
 		if(0==timestep%step_conf || int_tconf1 > int_tconf0){
-			write_conf();
-			cout << "<Output conf files at: " << timestep << ">";
-			
+			write_conf(); cout << "   <Output conf files at: " << timestep << ">";
 		}
 		int_tconf0 = int_tconf1;
 
 		if(0==timestep%step_out)
-			fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.cal_energy());
+			fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.ecal_whole());
 		
 		if(0==timestep%step_his){
 			write_hisdef();
@@ -83,11 +82,8 @@ int main(int nArg, char *Arg[]){
 
 	// finalizing
 	if(timestep%step_log != 0) printf("\n%lld %f %d	%d %d	%d %d %d %d ", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB);
-	
-	write_conf(); 
-	cout << "<Output conf files at: " << timestep << ">";
-	
-	if(timestep%step_out != 0) fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.cal_energy());
+	write_conf(); cout << "<Output conf files at: " << timestep << ">";
+	if(timestep%step_out != 0) fprintf(out_engy, "%lld %e %f\n", timestep, totaltime, events.ecal_whole());
 
 	int tfcpu= time(0);
 	cout << "\n**** The simulation is done! Total CPU time: " << tfcpu - t0cpu << " secs ****" << endl;
