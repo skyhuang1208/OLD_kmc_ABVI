@@ -34,6 +34,7 @@ int main(int nArg, char *Arg[]){
 		static int n_0defect= 0;
 		int int_t0, int_t1;
 		int_t1  = (int) (totaltime/time_genr);
+		if(timestep==ts_bg+1) int_t0= int_t1;
 		if(dt==0){
 			events.genr(); // Frenkel pair genr
 			totaltime= (int_t1+1) * time_genr;

@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <cstdio>
 #include <vector>
@@ -128,8 +129,10 @@ void write_conf(){
 	if(!of_ltcp.is_open()) error(1, "(write_conf) ltcp file is not opened!");	// check
 	
 	// write out data
-	of_xyz << nx*ny*nz << "\n" << "xyz " << timestep << " " << totaltime << "\n";
-	of_ltcp << nx*ny*nz << "\n" << "ltcp " << timestep << " " << totaltime << "\n";
+	of_xyz << nx*ny*nz << "\n" << "xyz " << timestep << " ";
+	of_xyz << setprecision(15) << totaltime << "\n";
+	of_ltcp << nx*ny*nz << "\n" << "ltcp " << timestep << " ";
+	of_ltcp << setprecision(15) << totaltime << "\n";
 	for(int i=0; i<nx; i ++){
 		for(int j=0; j<ny; j ++){
 			for(int k=0; k<nz; k ++){

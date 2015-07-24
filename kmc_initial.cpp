@@ -104,7 +104,7 @@ void class_initial::read_restart(char name_restart[], long long int &ts_initial,
 	ifstream if_re(name_restart, ios::in);
 	if(!if_re.is_open()) error(1, "(read_restart) the file is not opened!");
 	
-	int timestep;
+	long long int timestep;
 	double time;
 
 	int ntotal;

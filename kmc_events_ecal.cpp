@@ -30,13 +30,15 @@ double class_events::cal_energy(bool is_itl, int x1, int y1, int z1, int x2, int
 
 		int state_i= states[xi][yi][zi];
 
+		if(! is_itl && 0==state_i) continue;
+
 		// Calculations for 1st nn
 		if(is_itl){ // because only in AB itl these terms appear in diff
 			type[i]= state_i;
-			s1um40 += n1nbr * powc(state_i, 4); // altho it's i**4 + j**4 inside n1nbr loop
-			s1um30 += n1nbr * powc(state_i, 3); // actual diff is 8 times state i
-			s1um20 += n1nbr * powc(state_i, 2);
-			s1um10 += n1nbr *      state_i;
+			s1um40 += n1nbr * state_i * state_i * state_i * state_i; // altho it's i**4 + j**4 inside n1nbr loop
+			s1um30 += n1nbr * state_i * state_i * state_i;		 // actual diff is 8 times state i
+			s1um20 += n1nbr * state_i * state_i;
+			s1um10 += n1nbr * state_i;
 		}
 
 		for(int a=0; a<n1nbr; a ++){ // 1st neighbors
@@ -53,26 +55,32 @@ double class_events::cal_energy(bool is_itl, int x1, int y1, int z1, int x2, int
 			}
 			
 			if(0==state_j1) continue;
-			s1um44 += powc(state_i, 4) * powc(state_j1, 4); // energies for pairs
-			s1um43 += powc(state_i, 4) * powc(state_j1, 3) + powc(state_i, 3) * powc(state_j1, 4);
-			s1um42 += powc(state_i, 4) * powc(state_j1, 2) + powc(state_i, 2) * powc(state_j1, 4);
-			s1um41 += powc(state_i, 4) * powc(state_j1, 1) + powc(state_i, 1) * powc(state_j1, 4);
-			s1um33 += powc(state_i, 3) * powc(state_j1, 3);
-			s1um32 += powc(state_i, 3) * powc(state_j1, 2) + powc(state_i, 2) * powc(state_j1, 3);
-			s1um31 += powc(state_i, 3) * powc(state_j1, 1) + powc(state_i, 1) * powc(state_j1, 3);
-			s1um22 += powc(state_i, 2) * powc(state_j1, 2);
-			s1um21 += powc(state_i, 2) * powc(state_j1, 1) + powc(state_i, 1) * powc(state_j1, 2);
-			s1um11 += powc(state_i, 1) * powc(state_j1, 1);
+			s1um44 += state_i * state_i * state_i * state_i * state_j1 * state_j1 * state_j1 * state_j1;
+			s1um43 += state_i * state_i * state_i * state_i * state_j1 * state_j1 * state_j1
+			        + state_i * state_i * state_i		* state_j1 * state_j1 * state_j1 * state_j1;
+			s1um42 += state_i * state_i * state_i * state_i * state_j1 * state_j1
+			        + state_i * state_i			* state_j1 * state_j1 * state_j1 * state_j1;
+			s1um41 += state_i * state_i * state_i * state_i * state_j1
+			        + state_i				* state_j1 * state_j1 * state_j1 * state_j1;
+			s1um33 += state_i * state_i * state_i		* state_j1 * state_j1 * state_j1;
+			s1um32 += state_i * state_i * state_i		* state_j1 * state_j1
+			        + state_i * state_i			* state_j1 * state_j1 * state_j1;
+			s1um31 += state_i * state_i * state_i		* state_j1
+			        + state_i				* state_j1 * state_j1 * state_j1;
+			s1um22 += state_i * state_i			* state_j1 * state_j1;
+			s1um21 += state_i * state_i			* state_j1 
+				+ state_i				* state_j1 * state_j1;
+			s1um11 += state_i				* state_j1;
 		}
 				
 if(! is_e2nbr) continue;
 
 		// Calculations for 2nd nn
 		if(is_itl){
-			s2um40 += n2nbr * powc(state_i, 4);
-			s2um30 += n2nbr * powc(state_i, 3);
-			s2um20 += n2nbr * powc(state_i, 2);
-			s2um10 += n2nbr *      state_i;
+			s2um40 += n2nbr * state_i * state_i * state_i * state_i; // altho it's i**4 + j**4 inside n1nbr loop
+			s2um30 += n2nbr * state_i * state_i * state_i;		 // actual diff is 8 times state i
+			s2um20 += n2nbr * state_i * state_i;
+			s2um10 += n2nbr * state_i;
 		}
 		
 		for(int b=0; b<n2nbr; b ++){ // 2nd neighbors
@@ -87,16 +95,22 @@ if(! is_e2nbr) continue;
 			}
 			
 			if(0==state_j2) continue;
-			s2um44 += powc(state_i, 4) * powc(state_j2, 4); // energies for pairs
-			s2um43 += powc(state_i, 4) * powc(state_j2, 3) + powc(state_i, 3) * powc(state_j2, 4);
-			s2um42 += powc(state_i, 4) * powc(state_j2, 2) + powc(state_i, 2) * powc(state_j2, 4);
-			s2um41 += powc(state_i, 4) * powc(state_j2, 1) + powc(state_i, 1) * powc(state_j2, 4);
-			s2um33 += powc(state_i, 3) * powc(state_j2, 3);
-			s2um32 += powc(state_i, 3) * powc(state_j2, 2) + powc(state_i, 2) * powc(state_j2, 3);
-			s2um31 += powc(state_i, 3) * powc(state_j2, 1) + powc(state_i, 1) * powc(state_j2, 3);
-			s2um22 += powc(state_i, 2) * powc(state_j2, 2);
-			s2um21 += powc(state_i, 2) * powc(state_j2, 1) + powc(state_i, 1) * powc(state_j2, 2);
-			s2um11 += powc(state_i, 1) * powc(state_j2, 1);
+			s2um44 += state_i * state_i * state_i * state_i * state_j2 * state_j2 * state_j2 * state_j2;
+			s2um43 += state_i * state_i * state_i * state_i * state_j2 * state_j2 * state_j2
+			        + state_i * state_i * state_i		* state_j2 * state_j2 * state_j2 * state_j2;
+			s2um42 += state_i * state_i * state_i * state_i * state_j2 * state_j2
+			        + state_i * state_i			* state_j2 * state_j2 * state_j2 * state_j2;
+			s2um41 += state_i * state_i * state_i * state_i * state_j2
+			        + state_i				* state_j2 * state_j2 * state_j2 * state_j2;
+			s2um33 += state_i * state_i * state_i		* state_j2 * state_j2 * state_j2;
+			s2um32 += state_i * state_i * state_i		* state_j2 * state_j2
+			        + state_i * state_i			* state_j2 * state_j2 * state_j2;
+			s2um31 += state_i * state_i * state_i		* state_j2
+			        + state_i				* state_j2 * state_j2 * state_j2;
+			s2um22 += state_i * state_i			* state_j2 * state_j2;
+			s2um21 += state_i * state_i			* state_j2 
+				+ state_i				* state_j2 * state_j2;
+			s2um11 += state_i				* state_j2;
 		}
 	}
 
