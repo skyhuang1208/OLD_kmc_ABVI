@@ -21,40 +21,21 @@ int main(int nArg, char *Arg[]){
 
 	cout << "\n########## The Simulation Begins !! ##########" << endl;
 	timestep=  ts_bg; totaltime= time_bg;
-	int N_genr= 0;
 	cout << "TIMESTEP() TIME(s) GENR()	NA() NB()	NV() NAA() NAB() NBB()	AJUMP_V% AJUMP_I%";
 	printf("\n%d %e %d     %d %d     %d %d %d %d     %f %f", 0, 0.0, 0, nA, nB, nV, nAA, nAB, nBB, 0.0, 0.0);
 	while((totaltime<= time_bg+par_time) && (timestep != ts_bg+par_step)){
 		timestep ++;
 		
 		// CALCULATIONS
-		double dt= events.jump(); // Defect jumps
+		double dt= events.jump(); // Select an event
 		totaltime += dt;
-
-		static int n_0defect= 0;
-		int int_t0, int_t1;
-		int_t1  = (int) (totaltime/time_genr);
-		if(timestep==ts_bg+1) int_t0= int_t1;
-		if(dt==0){
-			events.genr(); // Frenkel pair genr
-			totaltime= (int_t1+1) * time_genr;
-			int_t1  = (int) (totaltime/time_genr);
-			N_genr ++;
-			n_0defect ++;
-		}
-		else if(int_t1 > int_t0){ 
-			for(int i=0; i<(int_t1-int_t0); i ++){
-				events.genr(); // Frenkel pair genr
-				N_genr ++;
-			}
-		}
-		int_t0 = int_t1;
+        static int n_0defect= 0;
+        if(abs(dt-1.0/rate_genr)<1e-10) n_0defect ++;
 
 		// OUTPUT DATA
 		if(0==timestep%step_log){
 			printf("\n%lld %e %d     %d %d     %d %d %d %d     %f %f", timestep, totaltime, N_genr, nA, nB, nV, nAA, nAB, nBB, 
 										   ((double) Vja[0])/(Vja[0]+Vja[1]), ((double) Ija[0])/(Ija[0]+Ija[1]));
-			
 			if(is_ncsv){
 				cout << "  *** Non-csvd v in sink: N= " << n_noncsv << " *** ";
 				is_ncsv= false;

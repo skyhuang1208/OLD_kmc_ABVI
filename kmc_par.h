@@ -10,8 +10,8 @@ const int    par_nz=                       64;
 const double par_compA=                  0.95; // composition of A atoms
 const int    par_nV=                        0;
 
-const double	    par_time=            5e04; 	// toal time (s)
-const long long int par_step=            1e10; 	// toal timestep (give a minus step to ignore this quiterior to end the simulation)
+const double	    par_time=            2e06; 	// toal time (s)
+const long long int par_step=            3e10; 	// toal timestep (give a minus step to ignore this quiterior to end the simulation)
 
 const long long int step_log=	          5e4; 
 const long long int step_conf=   par_step/5e0;	// timestep that output a conf file for restart later
@@ -19,7 +19,7 @@ const long long int time_conf=   par_time/5e0;	//     time that output a conf fi
 const long long int step_out=	 par_step/5e2; 
 const long long int step_his=		  1e5;
 
-const bool par_isrestart=		    false;
+const bool par_isrestart=		     true;
 
 const char   par_name_sol[20]=      "history.sol";
 const char   par_name_def[20]=      "history.def";
@@ -30,16 +30,16 @@ const double par_dis_rec=0.866*3; // recombination distance
 const double par_dpasm1=    1e-6; 
 
 // Ising model energy calculation parameters
-const double par_temp=                       500.0;
+const double par_temp=                       800.0;
 const double par_beta= 1.0/par_temp/8.617332478e-5; // 1/kbT, units: eV, K
 
 const double par_muA=			   5.0e+15; // units: s^-1 
 const double par_muB=			   5.0e+15; // units: s^-1 
 
-const double par_emvA=			       1.0;
-const double par_emvB=			       1.0;
-const double par_emiA=			       0.5;
-const double par_emiB=			       0.5;
+const double par_emvA=			       0.9; // originally 1.0
+const double par_emvB=			       1.1;
+const double par_emiA=			       0.6; // originally 0.5
+const double par_emiB=			       0.4;
 
 const double par_erAA=				 0; // rotation energy barrier
 const double par_erAB=				 0;
@@ -57,7 +57,7 @@ const double eAA1BB=                         0;
 const double eA1A=                      -1.070;
 const double eA1V=                      -0.300;
 const double eA1AB=                          0;
-const double eA1B=                      -0.985;
+const double eA1B=                      -1.043;
 const double eA1BB=                          0;
 // ---
 const double eV1V=                           0;

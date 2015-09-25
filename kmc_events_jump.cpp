@@ -21,7 +21,7 @@ double class_events::jump(){
 	double vrates= cal_ratesV(isvcc, rates, ilist, inbrs, jatom);
 	double irates= cal_ratesI(isvcc, rates, ilist, inbrs, jatom);
 
-	double sum_rates= vrates + irates; // sum of all rates
+	double sum_rates= vrates + irates + rate_genr; // sum of all rates
 	double ran= ran_generator();
 	double acc_rate= 0; // accumulated rate
 
@@ -49,18 +49,21 @@ double class_events::jump(){
 			
 			}
 			
-			break;
+			goto skip_genr;
 		}
 		
 		acc_rate += rates[i]/sum_rates;
 	}
 	
+	genr(); // Frenkel pair genr
+    N_genr ++;
+
+skip_genr:;
+
 	if(nA+nB+nV+nAA+nBB+nAB != nx*ny*nz)  error(2, "(jump) numbers of ltc points arent consistent, diff=", 1, nA+nB+nV+nAA+nBB+nAB-nx*ny*nz); // check
 //	if(2*nAA+nA-nB-2*nBB != sum_mag)  error(2, "(jump) magnitization isnt conserved", 2, 2*nAA+nA-nB-2*nBB, sum_mag); // dont use it since reservior
 
-	double dt= 1.0/sum_rates;
-	if(0==sum_rates) return 0;
-	else		 return 1.0/sum_rates;
+	return 1.0/sum_rates;
 }
 
 void class_events::actual_jumpV(int vid, int nid){ // vcc id and neighbor id

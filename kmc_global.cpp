@@ -35,6 +35,7 @@ long long int Vja[2]= {0};
 long long int Ija[2]= {0};
 
 vector <int> list_sink;  // atoms in the sink
+int N_genr= 0; // number of F-pair generation 
 int nonconsv= 0;
 int n_noncsv= 0;
 bool is_ncsv= false;

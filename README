@@ -1,3 +1,7 @@
+!!!!! Recombination is treated as a special event, it happens instantly. So we generate pairs, move defects and check if they recombine !!!!!
+!!!!! A fix sink in the middle of x dimension. A defect jumping onto it will disappear and become an atom !!!!!
+
+
 1. General functions
 	there are some functions for the whole program in "kmc_system.h", e.g., ran_generator, pbc, error
 2. states array in functions
